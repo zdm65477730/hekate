@@ -234,7 +234,7 @@ static int _stat_and_copy_files(const char *src, const char *dst, char *path, u3
 		}
 		else // It's a directory.
 		{
-			if (!memcmp("系统卷标信息", fno.fname, 25))
+			if (!memcmp("System Volume Information", fno.fname, 25))
 				continue;
 
 			// Create folder to destination.
