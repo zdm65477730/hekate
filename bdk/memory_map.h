@@ -29,6 +29,7 @@
 #define SECMON_MIN_START  0x4002B000 // Minimum reserved address for secmon.
 
 #define SDRAM_PARAMS_ADDR 0x40030000 // SDRAM extraction buffer during sdram init.
+#define CBFS_DRAM_EN_ADDR 0x4003e000 // u32.
 
 /* start.S / exception_handlers.S */
 #define SYS_STACK_TOP_INIT 0x4003FF00
@@ -85,6 +86,7 @@
 // SDMMC DMA buffers 2
 #define SDXC_BUF_ALIGNED   0xEF000000
 #define MIXD_BUF_ALIGNED   0xF0000000
+#define TITLEKEY_BUF_ADR   MIXD_BUF_ALIGNED
 #define EMMC_BUF_ALIGNED   MIXD_BUF_ALIGNED
 #define  SDMMC_DMA_BUF_SZ      SZ_16M // 4MB currently used.
 
@@ -105,6 +107,7 @@
 
 /* OBSOLETE: Very old hwinit based payloads were setting a carveout here. */
 #define DRAM_MEM_HOLE_ADR 0xF6A00000
+#define NX_BIS_LOOKUP_ADR DRAM_MEM_HOLE_ADR
 #define DRAM_MEM_HOLE_SZ   0x8140000
 /* ---   Hole: 129MB 0xF6A00000 - 0xFEB3FFFF --- */
 #define DRAM_START2       0xFEB40000
