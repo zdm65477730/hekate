@@ -51,6 +51,12 @@ typedef enum
 	ERR_EXCEPTION  = BIT(31),
 } hekate_errors_t;
 
+typedef struct _cfg_op_t
+{
+	u32 off;
+	u32 val;
+} cfg_op_t;
+
 typedef struct _reg_cfg_t
 {
 	u32 idx;
