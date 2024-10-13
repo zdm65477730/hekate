@@ -727,7 +727,7 @@ static lv_res_t _create_window_usb_tools(lv_obj_t *parent)
 	// Create RAW GPP button.
 	lv_obj_t *btn_gpp = lv_btn_create(h1, btn1);
 	label_btn = lv_label_create(btn_gpp, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_CHIP"  eMMC GPP");
+	lv_label_set_static_text(label_btn, SYMBOL_CHIP"  eMMC原始GPP");
 	lv_obj_align(btn_gpp, label_txt2, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 2);
 	lv_btn_set_action(btn_gpp, LV_BTN_ACTION_CLICK, _action_ums_emmc_gpp);
 

@@ -225,7 +225,7 @@ static lv_res_t _create_mbox_cal0(lv_obj_t *btn)
 	lv_obj_set_style(dark_bg, &mbox_darken);
 	lv_obj_set_size(dark_bg, LV_HOR_RES, LV_VER_RES);
 
-	static const char * mbox_btn_map[] = { "\251", "\222Dump", "\222Close", "\251", "" };
+	static const char * mbox_btn_map[] = { "\251", "\222提取", "\222关闭", "\251", "" };
 	lv_obj_t * mbox = lv_mbox_create(dark_bg, NULL);
 	lv_mbox_set_recolor_text(mbox, true);
 	lv_obj_set_width(mbox, LV_HOR_RES / 9 * 5);
@@ -265,13 +265,13 @@ static lv_res_t _create_mbox_cal0(lv_obj_t *btn)
 	se_calc_sha256_oneshot(hash, (u8 *)cal0 + 0x40, cal0->body_size);
 
 	s_printf(txt_buf,
-		"#FF8000 CAL0版本：#	%d\n"
-		"#FF8000 更新次数：#	%d\n"
-		"#FF8000 序列号：#		%s\n"
-		"#FF8000 无线MAC：#		%02X:%02X:%02X:%02X:%02X:%02X\n"
-		"#FF8000 蓝牙MAC：#		%02X:%02X:%02X:%02X:%02X:%02X\n"
-		"#FF8000 电池LOT：#		%s（%d）\n"
-		"#FF8000 LCD厂商：#		",
+		"#FF8000 CAL0版本：# %d\n"
+		"#FF8000 更新次数：# %d\n"
+		"#FF8000 序列号：# %s\n"
+		"#FF8000 无线MAC：# %02X:%02X:%02X:%02X:%02X:%02X\n"
+		"#FF8000 蓝牙MAC：# %02X:%02X:%02X:%02X:%02X:%02X\n"
+		"#FF8000 电池LOT：# %s（%d）\n"
+		"#FF8000 LCD厂商：# ",
 		cal0->version, cal0->update_cnt, cal0->serial_number,
 		cal0->wlan_mac[0], cal0->wlan_mac[1], cal0->wlan_mac[2], cal0->wlan_mac[3], cal0->wlan_mac[4], cal0->wlan_mac[5],
 		cal0->bd_mac[0], cal0->bd_mac[1], cal0->bd_mac[2], cal0->bd_mac[3], cal0->bd_mac[4], cal0->bd_mac[5],
@@ -327,9 +327,9 @@ static lv_res_t _create_mbox_cal0(lv_obj_t *btn)
 	}
 
 	s_printf(txt_buf + strlen(txt_buf),
-		" (%06X)\n#FF8000 触摸屏供应商：#      %d\n"
-		"#FF8000 IMU类型/安装座：#    %d / %d\n"
-		"#FF8000 摇杆L/R类型：#    %02X / %02X\n",
+		" (%06X)\n#FF8000 触摸屏供应商：# %d\n"
+		"#FF8000 IMU类型/安装座：# %d / %d\n"
+		"#FF8000 摇杆L/R类型：# %02X / %02X\n",
 		cal0->lcd_vendor, cal0->touch_ic_vendor_id,
 		cal0->console_6axis_sensor_type, cal0->console_6axis_sensor_mount_type,
 		cal0->analog_stick_type_l, cal0->analog_stick_type_r);
@@ -373,7 +373,7 @@ static lv_res_t _create_window_fuses_info_status(lv_obj_t *btn)
 		"ODM字段(4, 6, 7)：\n"
 		"安全启动密钥(SBK)：\n"
 		"设备密钥(DK)：\n"
-		"公钥（PK SHA256）：\n\n"
+		"公钥(PK SHA256)：\n\n"
 		"系统注册机修订版本：\n"
 		"USB栈：\n"
 		"最终测试版本：\n"
@@ -1040,7 +1040,7 @@ static lv_res_t _create_window_bootrom_info_status(lv_obj_t *btn)
 
 	char *txt_buf = (char *)malloc(SZ_4K);
 	ipatches_txt = txt_buf;
-	s_printf(txt_buf, "#00DDFF Ipatches：#\n#FF8000 地址 "SYMBOL_DOT" 值 "SYMBOL_DOT" 指令#\n");
+	s_printf(txt_buf, "#00DDFF Ipatches：#\n#FF8000 地址    "SYMBOL_DOT"  值    "SYMBOL_DOT"  指令#\n");
 
 	u32 res = fuse_read_ipatch(_ipatch_process);
 	if (res != 0)
@@ -1760,7 +1760,7 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 
 	u32 idx = 0;
 	int lines_left = 20;
-	s_printf(txt_buf + strlen(txt_buf), "#FFBA00 索引 名称                      大小        偏移     扇区数#\n");
+	s_printf(txt_buf + strlen(txt_buf), "#FFBA00 索引  名称                    大小         偏移      扇区数#\n");
 	LIST_FOREACH_ENTRY(emmc_part_t, part, &gpt, link)
 	{
 		int lines = strlen(part->name) > 25 ? 2 : 1;
@@ -1772,13 +1772,13 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 
 		if (lines == 2)
 		{
-			s_printf(txt_buf + strlen(txt_buf), "%02d：#96FF00 %s#\n                              %6d MiB  %8Xh  %8Xh\n",
+			s_printf(txt_buf + strlen(txt_buf), "%02d：  #96FF00 %s#\n                              %6d MiB  %8Xh  %8Xh\n",
 				part->index, part->name, (part->lba_end - part->lba_start + 1) >> SECTORS_TO_MIB_COEFF,
 				part->lba_start, part->lba_end - part->lba_start + 1);
 		}
 		else
 		{
-			s_printf(txt_buf + strlen(txt_buf), "%02d：#96FF00 %.25s# %6d MiB  %8Xh  %8Xh\n",
+			s_printf(txt_buf + strlen(txt_buf), "%02d：  #96FF00 %.22s# %6d MiB  %8Xh  %8Xh\n",
 				part->index, part->name, (part->lba_end - part->lba_start + 1) >> SECTORS_TO_MIB_COEFF,
 				part->lba_start, part->lba_end - part->lba_start + 1);
 		}
