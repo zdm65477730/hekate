@@ -202,6 +202,27 @@ void reg_write_array(u32 *base, const reg_cfg_t *cfg, u32 num_cfg)
 		base[cfg[i].idx] = cfg[i].val;
 }
 
+u16 crc16_calc(const u8 *buf, u32 len)
+{
+	const u8 *p, *q;
+	u16 crc = 0x55aa;
+
+	static u16 table[16] = {
+		0x0000, 0xCC01, 0xD801, 0x1400, 0xF001, 0x3C00, 0x2800, 0xE401,
+		0xA001, 0x6C00, 0x7800, 0xB401, 0x5000, 0x9C01, 0x8801, 0x4400
+	};
+
+	q = buf + len;
+	for (p = buf; p < q; p++)
+	{
+		u8 oct = *p;
+		crc = (crc >> 4) ^ table[crc & 0xf] ^ table[(oct >> 0) & 0xf];
+		crc = (crc >> 4) ^ table[crc & 0xf] ^ table[(oct >> 4) & 0xf];
+	}
+
+	return crc;
+}
+
 u32 crc32_calc(u32 crc, const u8 *buf, u32 len)
 {
 	const u8 *p, *q;
