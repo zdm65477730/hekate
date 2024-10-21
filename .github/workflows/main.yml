@@ -59,6 +59,7 @@ jobs:
       - name: Build
         run: |
           export DEVKITPRO=/opt/devkitpro
+          export DEVKITARM=/opt/devkitpro/devkitARM
           make -j$(nproc)
         shell: bash
       - name: Github Release create, update, and upload assets
