@@ -59,15 +59,15 @@ jobs:
           export DEVKITPRO=/opt/devkitpro
           export DEVKITARM=/opt/devkitpro/devkitARM
           make -j$(nproc)
-          ls -l output/
         shell: bash
-      - name: Github Release create, update, and upload assets
-        uses: meeDamian/github-release@v2.0.3
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ env.TAG }}
-          name: ${{ env.RELEASE_NAME }}
-          gzip: false
-          files: >
-            output/nyx.bin
-          allow_override: yes
+          name: hekate-release-artifacts
+          path: ./output/nyx.bin
+      - name: Create release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "nyx.bin"
+          prerelease: false
+          name: "${{ github.RELEASE_NAME }}"
