@@ -37,7 +37,6 @@ jobs:
           sudo mkdir -p ${DEVKITPRO}/libnx
           cd nx
           tar --exclude=*~ -cjf libnx.tar.bz2 include lib default_icon.jpg switch_rules switch.ld switch.specs -C external/bsd include
-          ls libnx.tar.bz2
           sudo tar -xf libnx.tar.bz2 -C ${DEVKITPRO}/libnx --overwrite
         shell: bash
       - name: Checkout latest code
@@ -54,13 +53,13 @@ jobs:
           VERSION_NYX=$(awk '/^NYXVERSION_MAJOR/{print $3}' $VER_FILE).$(awk '/^NYXVERSION_MINOR/{print $3}' $VER_FILE).$(awk '/^NYXVERSION_HOTFX/{print $3}' $VER_FILE)
           echo "TAG=v${VERSION_HEKATE}-CN" >> "${GITHUB_ENV}"
           echo "RELEASE_NAME=hekate v${VERSION_HEKATE} & Nyx v${VERSION_NYX} CN" >> "${GITHUB_ENV}"
-          echo "RELEASE_PATH=/opt/images" >> "${GITHUB_ENV}"
         shell: bash
       - name: Build
         run: |
           export DEVKITPRO=/opt/devkitpro
           export DEVKITARM=/opt/devkitpro/devkitARM
           make -j$(nproc)
+          ls -l output/
         shell: bash
       - name: Github Release create, update, and upload assets
         uses: meeDamian/github-release@v2.0.3
