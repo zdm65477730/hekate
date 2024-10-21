@@ -48,6 +48,8 @@ jobs:
           fetch-tags: true
       - name: Setup ENV parameters
         run: |
+          commit=$(echo "$(git rev-parse --short=9 HEAD)")
+          echo "COMMIT=${commit}" >> "${GITHUB_ENV}"
           VER_FILE=Versions.inc
           VERSION_HEKATE=$(awk '/^BLVERSION_MAJOR/{print $3}' $VER_FILE).$(awk '/^BLVERSION_MINOR/{print $3}' $VER_FILE).$(awk '/^BLVERSION_HOTFX/{print $3}' $VER_FILE)
           VERSION_NYX=$(awk '/^NYXVERSION_MAJOR/{print $3}' $VER_FILE).$(awk '/^NYXVERSION_MINOR/{print $3}' $VER_FILE).$(awk '/^NYXVERSION_HOTFX/{print $3}' $VER_FILE)
@@ -71,5 +73,6 @@ jobs:
           artifacts: "nyx.bin"
           allowUpdates: yes
           tag: "${{ github.TAG }}"
+          commit: "${{ github.COMMIT }}"
           prerelease: false
           name: "${{ github.RELEASE_NAME }}"
