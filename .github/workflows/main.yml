@@ -66,8 +66,10 @@ jobs:
           name: hekate-release-artifacts
           path: ./output/nyx.bin
       - name: Create release
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@v1.14.0
         with:
           artifacts: "nyx.bin"
+          allowUpdates: yes
+          tag: "${{ github.TAG }}"
           prerelease: false
           name: "${{ github.RELEASE_NAME }}"
