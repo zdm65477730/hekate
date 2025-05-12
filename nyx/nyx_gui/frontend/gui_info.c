@@ -1352,7 +1352,7 @@ static lv_res_t _create_mbox_benchmark(bool sd_bench)
 
 	char *txt_buf = (char *)malloc(SZ_16K);
 
-	s_printf(txt_buf, "#FF8000 %s 基准测试#\n[原始读取] 中止：音量-&音量+", sd_bench ? "SD卡" : "eMMC");
+	s_printf(txt_buf, "#FF8000 %s基准测试#\n[原始读取] 中止：音量-&音量+", sd_bench ? "SD卡" : "eMMC");
 
 	lv_mbox_set_text(mbox, txt_buf);
 	txt_buf[0] = 0;
@@ -1544,7 +1544,7 @@ static lv_res_t _create_mbox_benchmark(bool sd_bench)
 		// Calculate rate and IOPS for transfer.
 		rate_1k = (u64)size_bytes_4kb * 1000 * 1000 * 1000 / mb_div / timer;
 		u32 iops = ((u64)(sct_rem_4kb / sct_num_1mb) * 1024 * 1000 * 1000 * 1000) / (4096 / 1024) / timer / 1000;
-		s_printf(txt_buf + strlen(txt_buf), "        平均值 #C7EA46 第95百分位数#  #FF3C28 第5百分位数#\n");
+		s_printf(txt_buf + strlen(txt_buf), "     平均 #C7EA46 第95# #FF3C28 第5#\n");
 		s_printf(txt_buf + strlen(txt_buf), " 顺序4KB - 速率：#C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
 			rate_1k / 1000, (rate_1k % 1000) / 10, mbs_text, iops, 1000000 / pct95, 1000000 / pct05);
 		lv_label_set_text(lbl_status, txt_buf);
@@ -1659,7 +1659,7 @@ error:
 		emmc_end();
 
 out:
-	s_printf(txt_buf, "#FF8000 %s 基准测试#\n[原始读取]", sd_bench ? "SD卡" : "eMMC");
+	s_printf(txt_buf, "#FF8000 %s基准测试#\n[原始读取]", sd_bench ? "SD卡" : "eMMC");
 	lv_mbox_set_text(mbox, txt_buf);
 	free(txt_buf);
 
