@@ -97,7 +97,7 @@ static void _check_power_off_from_hos()
 #define RCM_PAYLOAD_ADDR    (EXT_PAYLOAD_ADDR + ALIGN(PATCHED_RELOC_SZ, 0x10))
 #define COREBOOT_END_ADDR   0xD0000000
 #define COREBOOT_VER_OFF    0x41
-#define CBFS_DRAM_EN_ADDR   0x4003E000
+//#define CBFS_DRAM_EN_ADDR   0x4003E000
 #define  CBFS_DRAM_MAGIC    0x4452414D // "DRAM"
 
 static void *coreboot_addr;

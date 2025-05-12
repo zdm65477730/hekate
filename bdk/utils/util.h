@@ -51,6 +51,12 @@ typedef enum
 	ERR_EXCEPTION  = BIT(31),
 } hekate_errors_t;
 
+typedef struct _cfg_op_t
+{
+	u32 off;
+	u32 val;
+} cfg_op_t;
+
 typedef struct _reg_cfg_t
 {
 	u32 idx;
@@ -87,6 +93,8 @@ long strtol(const char *nptr, char **endptr, register int base);
 int  atoi(const char *nptr);
 
 void reg_write_array(u32 *base, const reg_cfg_t *cfg, u32 num_cfg);
+void exec_cfg(u32 *base, const cfg_op_t *ops, u32 num_ops);
+u16  crc16_calc(const u8 *buf, u32 len);
 u32  crc32_calc(u32 crc, const u8 *buf, u32 len);
 
 int qsort_compare_int(const void *a, const void *b);

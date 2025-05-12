@@ -25,6 +25,7 @@
 #include <storage/mmc.h>
 #include <storage/sd.h>
 #include <storage/sd_def.h>
+#include <mem/mc.h>
 #include <memory_map.h>
 #include <gfx_utils.h>
 

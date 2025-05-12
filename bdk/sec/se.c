@@ -32,6 +32,9 @@ typedef struct _se_ll_t
 	vu32 size;
 } se_ll_t;
 
+static u32 _se_rsa_mod_sizes[SE_RSA_KEYSLOT_COUNT];
+static u32 _se_rsa_exp_sizes[SE_RSA_KEYSLOT_COUNT];
+
 se_ll_t ll_src, ll_dst;
 se_ll_t *ll_src_ptr, *ll_dst_ptr; // Must be u32 aligned.
 
@@ -211,6 +214,66 @@ void se_rsa_acc_ctrl(u32 rs, u32 flags)
 		SE(SE_RSA_SECURITY_PERKEY_REG) &= ~BIT(rs);
 }
 
+// se_rsa_key_set() was derived from Atmosphère's set_rsa_keyslot
+void se_rsa_key_set(u32 ks, const void *mod, u32 mod_size, const void *exp, u32 exp_size)
+{
+	u32 *data = (u32 *)mod;
+	for (u32 i = 0; i < mod_size / 4; i++)
+	{
+		SE(SE_RSA_KEYTABLE_ADDR_REG) = RSA_KEY_NUM(ks) | SE_RSA_KEYTABLE_TYPE(RSA_KEY_TYPE_MOD) | i;
+		SE(SE_RSA_KEYTABLE_DATA_REG) = byte_swap_32(data[mod_size / 4 - i - 1]);
+	}
+
+	data = (u32 *)exp;
+	for (u32 i = 0; i < exp_size / 4; i++)
+	{
+		SE(SE_RSA_KEYTABLE_ADDR_REG) = RSA_KEY_NUM(ks) | SE_RSA_KEYTABLE_TYPE(RSA_KEY_TYPE_EXP) | i;
+		SE(SE_RSA_KEYTABLE_DATA_REG) = byte_swap_32(data[exp_size / 4 - i - 1]);
+	}
+
+	_se_rsa_mod_sizes[ks] = mod_size;
+	_se_rsa_exp_sizes[ks] = exp_size;
+}
+
+// se_rsa_key_clear() was derived from Atmosphère's clear_rsa_keyslot
+void se_rsa_key_clear(u32 ks)
+{
+	for (u32 i = 0; i < SE_RSA2048_DIGEST_SIZE / 4; i++)
+	{
+		SE(SE_RSA_KEYTABLE_ADDR_REG) = RSA_KEY_NUM(ks) | SE_RSA_KEYTABLE_TYPE(RSA_KEY_TYPE_MOD) | i;
+		SE(SE_RSA_KEYTABLE_DATA_REG) = 0;
+	}
+	for (u32 i = 0; i < SE_RSA2048_DIGEST_SIZE / 4; i++)
+	{
+		SE(SE_RSA_KEYTABLE_ADDR_REG) = RSA_KEY_NUM(ks) | SE_RSA_KEYTABLE_TYPE(RSA_KEY_TYPE_EXP) | i;
+		SE(SE_RSA_KEYTABLE_DATA_REG) = 0;
+	}
+}
+
+// se_rsa_exp_mod() was derived from Atmosphère's se_synchronous_exp_mod and se_get_exp_mod_output
+int se_rsa_exp_mod(u32 ks, void *dst, u32 dst_size, const void *src, u32 src_size)
+{
+	int res;
+	u8 stack_buf[SE_RSA2048_DIGEST_SIZE];
+
+	for (u32 i = 0; i < src_size; i++)
+		stack_buf[i] = *((u8 *)src + src_size - i - 1);
+
+	SE(SE_CONFIG_REG) = SE_CONFIG_ENC_ALG(ALG_RSA) | SE_CONFIG_DST(DST_RSAREG);
+	SE(SE_RSA_CONFIG) = RSA_KEY_SLOT(ks);
+	SE(SE_RSA_KEY_SIZE_REG) = (_se_rsa_mod_sizes[ks] >> 6) - 1;
+	SE(SE_RSA_EXP_SIZE_REG) = _se_rsa_exp_sizes[ks] >> 2;
+
+	res = _se_execute_oneshot(SE_OP_START, NULL, 0, stack_buf, src_size);
+
+	// Copy output hash.
+	u32 *dst32 = (u32 *)dst;
+	for (u32 i = 0; i < dst_size / 4; i++)
+		dst32[dst_size / 4 - i - 1] = byte_swap_32(SE(SE_RSA_OUTPUT_REG + (i * 4)));
+
+	return res;
+}
+
 void se_key_acc_ctrl(u32 ks, u32 flags)
 {
 	if (flags & SE_KEY_TBL_DIS_KEY_ACCESS_FLAG)
@@ -234,6 +297,12 @@ void se_aes_key_set(u32 ks, const void *key, u32 size)
 		SE(SE_CRYPTO_KEYTABLE_ADDR_REG) = SE_KEYTABLE_SLOT(ks) | SE_KEYTABLE_PKT(i); // QUAD is automatically set by PKT.
 		SE(SE_CRYPTO_KEYTABLE_DATA_REG) = data[i];
 	}
+}
+
+void se_aes_key_partial_set(u32 ks, u32 index, u32 data)
+{
+	SE(SE_CRYPTO_KEYTABLE_ADDR_REG) = SE_KEYTABLE_SLOT(ks) | index;
+	SE(SE_CRYPTO_KEYTABLE_DATA_REG) = data;
 }
 
 void se_aes_iv_set(u32 ks, const void *iv)
@@ -576,6 +645,52 @@ int se_calc_sha256_finalize(void *hash, u32 *msg_left)
 
 	se_calc_sha256_get_hash(hash, msg_left);
 
+	return res;
+}
+
+int se_calc_hmac_sha256(void *dst, const void *src, u32 src_size, const void *key, u32 key_size)
+{
+	int res = 0;
+	u8 tmp1[0x40] = {0};
+	u8 tmp2[0x40 + src_size];
+	u8 tmp3[0x60] = {0};
+	memset(tmp2, 0, 0x40 + src_size);
+
+	u8 *secret = (u8 *)tmp1;
+	u8 *ipad = (u8 *)tmp2;
+	u8 *opad = (u8 *)tmp3;
+
+	if (key_size > 0x40)
+	{
+		if (!se_calc_sha256_oneshot(secret, key, key_size))
+			goto out;
+		memset(secret + 0x20, 0, 0x20);
+	}
+	else
+	{
+		memcpy(secret, key, key_size);
+		memset(secret + key_size, 0, 0x40 - key_size);
+	}
+
+	u32 *secret32 = (u32 *)secret;
+	u32 *ipad32 = (u32 *)ipad;
+	u32 *opad32 = (u32 *)opad;
+	for (u32 i = 0; i < 0x10; i++)
+	{
+		ipad32[i] = secret32[i] ^ 0x36363636;
+		opad32[i] = secret32[i] ^ 0x5C5C5C5C;
+	}
+
+	memcpy(ipad + 0x40, src, src_size);
+	if (!se_calc_sha256_oneshot(dst, ipad, 0x40 + src_size))
+		goto out;
+	memcpy(opad + 0x40, dst, 0x20);
+	if (!se_calc_sha256_oneshot(dst, opad, 0x60))
+		goto out;
+
+	res = 1;
+
+out:;
 	return res;
 }
 

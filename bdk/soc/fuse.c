@@ -88,6 +88,15 @@ u32 fuse_read_odm_keygen_rev()
 	return 0;
 }
 
+u32 fuse_read_bootrom_rev()
+{
+	u32 rev = FUSE(FUSE_SOC_SPEEDO_1_CALIB);
+	if (hw_get_chip_id() == GP_HIDREV_MAJOR_T210)
+		return rev;
+	else
+		return rev | (1 << 12);
+}
+
 u32 fuse_read_dramid(bool raw_id)
 {
 	bool tegra_t210 = hw_get_chip_id() == GP_HIDREV_MAJOR_T210;
