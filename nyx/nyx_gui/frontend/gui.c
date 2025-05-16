@@ -830,7 +830,7 @@ static void _nyx_sd_card_issues_warning(void *param)
 		"#FF8000 SD卡发出警告#\n\n"
 		"#FFDD00 SD卡已在1位模式下初始化！#\n"
 		"#FFDD00 这可能意味着连接器已脱落或损坏！#\n\n"
-		"你可能需要查看\n#C7EA46 主机信息# -> #C7EA46 microSD#");
+		"您可能需要查看\n#C7EA46 主机信息# -> #C7EA46 microSD#");
 
 	lv_mbox_add_btns(mbox, mbox_btn_map, mbox_action);
 	lv_obj_set_width(mbox, LV_HOR_RES / 9 * 5);
@@ -1049,7 +1049,7 @@ static void _nyx_emmc_issues_warning(void *params)
 			"#FF8000 eMMC发出警告#\n\n"
 			"#FFDD00 您的eMMC是在较慢的模式下初始化的！#\n"
 			"#FFDD00 这可能意味着存在硬件问题！#\n\n"
-			"你可以通过以下方式检查\n#C7EA46 主机信息# -> #C7EA46 eMMC#");
+			"您可以通过以下方式检查\n#C7EA46 主机信息# -> #C7EA46 eMMC#");
 
 		lv_mbox_add_btns(mbox, mbox_btn_map, mbox_action);
 		lv_obj_set_width(mbox, LV_HOR_RES / 9 * 5);
@@ -1097,7 +1097,7 @@ static lv_res_t _create_mbox_reload(lv_obj_t *btn)
 	lv_mbox_set_recolor_text(mbox, true);
 	lv_obj_set_width(mbox, LV_HOR_RES * 4 / 10);
 
-	lv_mbox_set_text(mbox, "#FF8000 你真的想#\n#FF8000 重新加载hekate和Nyx吗？#\n\n"
+	lv_mbox_set_text(mbox, "#FF8000 您真的想#\n#FF8000 重新加载hekate和Nyx吗？#\n\n"
 		"这也会检查\n#96FF00 bootloader/update.bin#\n以确认hekate是否有更新");
 
 	lv_mbox_add_btns(mbox, mbox_btn_map, reload_action);
@@ -1145,7 +1145,7 @@ static lv_res_t _create_mbox_poweroff(lv_obj_t *btn)
 	lv_mbox_set_recolor_text(mbox, true);
 	lv_obj_set_width(mbox, LV_HOR_RES * 4 / 10);
 
-	lv_mbox_set_text(mbox, "#FF8000 你真的想#\n#FF8000 关机吗？#");
+	lv_mbox_set_text(mbox, "#FF8000 您真的想#\n#FF8000 关机吗？#");
 
 	lv_mbox_add_btns(mbox, mbox_btn_map, _poweroff_action);
 
@@ -2186,7 +2186,7 @@ void nyx_check_ini_changes()
 
 		lv_mbox_set_text(mbox,
 			"#FF8000 主要配置#\n\n"
-			"你修改了配置！\n\n"
+			"您修改了配置！\n\n"
 			"想保存吗？");
 
 		lv_mbox_add_btns(mbox, mbox_btn_map, _create_mbox_save_changes_action);

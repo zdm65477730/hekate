@@ -1392,7 +1392,7 @@ void restore_emmc_selected(emmcPartType_t restoreType, emmc_tool_gui_t *gui)
 
 	s_printf(txt_buf,
 		"#FFDD00 这可能会使设备无法工作！#\n\n"
-		"#FFDD00 你确定要继续吗？#");
+		"#FFDD00 您确定要继续吗？#");
 	if ((restoreType & PART_BOOT) || (restoreType & PART_GP_ALL))
 	{
 		s_printf(txt_buf + strlen(txt_buf),

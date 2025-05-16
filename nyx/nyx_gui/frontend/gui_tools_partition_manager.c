@@ -952,7 +952,7 @@ static lv_res_t _action_check_flash_linux(lv_obj_t *btn)
 	s_printf(txt_buf,
 		"#C7EA46 状态：#发现安装文件和分区。\n"
 		"#00DDFF 偏移：#%08x，#00DDFF 大小：#%X，#00DDFF 镜像大小：#%dMiB\n"
-		"\n你要继续吗？", l4t_flash_ctxt.offset_sct, size_sct, l4t_flash_ctxt.image_size_sct >> 11);
+		"\n您要继续吗？", l4t_flash_ctxt.offset_sct, size_sct, l4t_flash_ctxt.image_size_sct >> 11);
 	lv_label_set_text(lbl_status, txt_buf);
 	free(txt_buf);
 	lv_mbox_add_btns(mbox, mbox_btn_map2, _action_flash_linux_data);
@@ -2404,7 +2404,7 @@ check_changes:
 	lv_label_set_align(lbl_status, LV_LABEL_ALIGN_CENTER);
 
 	lv_label_set_text(lbl_status,
-		"#FF8000 警告：你真的要继续吗？#\n\n"
+		"#FF8000 警告：您真的要继续吗？#\n\n"
 		"按#FF8000 电源键#继续。\n按#FF8000 音量键#中止。");
 
 	lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);

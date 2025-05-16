@@ -407,13 +407,13 @@ lv_res_t create_window_backup_restore_tool(lv_obj_t *btn)
 	{
 		lv_label_set_static_text(label_txt4,
 			"允许您从原始的通用分区（GPP）备份除用户（USER）分区之外的其他分区。\n"
-			"它包含 CAL0、各种package2、系统（SYSTEM）等分区。\n"
+			"它包含CAL0、各种package2、系统（SYSTEM）等分区。\n"
 			"#FF8000 这是一个不完整的备份。#");
 	}
 	else
 	{
 		lv_label_set_static_text(label_txt4,
-			"允许你从原始通用分区（GPP）恢复所有分区。\n"
+			"允许您从原始通用分区（GPP）恢复所有分区。\n"
 			"它包含CAL0，各种package2，系统（SYSTEM），用户（USER）等分区。\n");
 	}
 
@@ -433,7 +433,7 @@ lv_res_t create_window_backup_restore_tool(lv_obj_t *btn)
 		label_txt4 = lv_label_create(h2, NULL);
 		lv_label_set_recolor(label_txt4, true);
 		lv_label_set_static_text(label_txt4,
-			"允许你从原始的通用分区（GPP）备份用户（USER）分区。\n"
+			"允许您从原始的通用分区（GPP）备份用户（USER）分区。\n"
 			"#FF8000 这是一个不完整的备份。#\n");
 		lv_obj_set_style(label_txt4, &hint_small_style);
 		lv_obj_align(label_txt4, btn4, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);

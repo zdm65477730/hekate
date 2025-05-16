@@ -1460,7 +1460,7 @@ void create_tab_options(lv_theme_t *th, lv_obj_t *parent)
 	lv_label_set_recolor(label_txt2, true);
 	lv_label_set_static_text(label_txt2,
 		"设置启用自动启动时显示启动标志的时间。\n"
-		"#C7EA46 你可以在进入hekate菜单前按##FF8000 音量-##C7EA46 。#\n");
+		"#C7EA46 您可以在进入hekate菜单前按##FF8000 音量-##C7EA46 。#\n");
 	lv_obj_set_style(label_txt2, &hint_small_style);
 	lv_obj_align(label_txt2, label_txt, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 4);
 

@@ -718,7 +718,7 @@ static lv_res_t _create_window_usb_tools(lv_obj_t *parent)
 	lv_obj_t *label_txt2 = lv_label_create(h1, NULL);
 	lv_label_set_recolor(label_txt2, true);
 	lv_label_set_static_text(label_txt2,
-		"允许你挂载SD卡到电脑或手机。"
+		"允许您挂载SD卡到电脑或手机。"
 		"支持所有的操作系统。\n#C7EA46 访问权限为##FF8000 读写。#");
 
 	lv_obj_set_style(label_txt2, &hint_small_style);
@@ -769,7 +769,7 @@ static lv_res_t _create_window_usb_tools(lv_obj_t *parent)
 	label_txt2 = lv_label_create(h1, NULL);
 	lv_label_set_recolor(label_txt2, true);
 	lv_label_set_static_text(label_txt2,
-		"允许你挂载eMMC或虚拟MMC。\n"
+		"允许您挂载eMMC或虚拟MMC。\n"
 		"#C7EA46 默认访问权限为##FF8000 只读。#");
 	lv_obj_set_style(label_txt2, &hint_small_style);
 	lv_obj_align(label_txt2, btn_emu_gpp, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
@@ -1496,7 +1496,7 @@ static void _create_tab_tools_emmc_pkg12(lv_theme_t *th, lv_obj_t *parent)
 		"允许您单独恢复eMMC或虚拟MMC分区，"
 		"或从SD卡恢复整个原始镜像。\n"
 		"#C7EA46 支持##FF8000 4GB##C7EA46 及以上SD卡，#"
-		"#FF8000 FAT32##C7EA46 和 ##FF8000 exFAT##C7EA46 文件系统。#");
+		"#FF8000 FAT32##C7EA46 和##FF8000 exFAT##C7EA46 文件系统。#");
 	lv_obj_set_style(label_txt2, &hint_small_style);
 	lv_obj_align(label_txt2, btn2, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
 
@@ -1532,7 +1532,7 @@ static void _create_tab_tools_emmc_pkg12(lv_theme_t *th, lv_obj_t *parent)
 	lv_label_set_recolor(label_txt4, true);
 	lv_label_set_static_text(label_txt4,
 		"允许您对SD卡进行分区以便与#C7EA46 虚拟MMC#，"
-		"#C7EA46 Android#和#C7EA46 Linux#一起使用。\n你也可以直接刷入Linux和Android。\n");
+		"#C7EA46 Android#和#C7EA46 Linux#一起使用。\n您也可以直接刷入Linux和Android。\n");
 	lv_obj_set_style(label_txt4, &hint_small_style);
 	lv_obj_align(label_txt4, btn3, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
 

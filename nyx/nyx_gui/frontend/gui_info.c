@@ -53,7 +53,7 @@ static lv_res_t _create_window_dump_done(int error, char *dump_filenames)
 	else
 	{
 		char *sn = emmcsn_path_impl(NULL, NULL, NULL, NULL);
-		s_printf(txt_buf, "提取到SD卡成功！\n文件：#C7EA46 backup/%s/dumps/#\n%s", sn, dump_filenames);
+		s_printf(txt_buf, "提取到SD卡成功！\n文件：#C7EA46 backup/%s/dumps/%s#\n", sn, dump_filenames);
 	}
 	lv_mbox_set_text(mbox, txt_buf);
 	free(txt_buf);
@@ -1135,7 +1135,7 @@ static lv_res_t _create_mbox_lockpick(lv_obj_t *btn)
 	lv_obj_t * mbox = lv_mbox_create(dark_bg, NULL);
 	lv_mbox_set_recolor_text(mbox, true);
 
-	lv_mbox_set_text(mbox, "#FF8000 Lockpick RCM#\n\n这将启动Lockpick RCM。\n你要继续吗？\n\n"
+	lv_mbox_set_text(mbox, "#FF8000 Lockpick RCM#\n\n这将启动Lockpick RCM。\n您要继续吗？\n\n"
 		"想从lockpick返回请使用\n#96FF00 重启到hekate#。");
 
 	lv_mbox_add_btns(mbox, mbox_btn_map, _launch_lockpick_action);
@@ -1232,13 +1232,13 @@ static lv_res_t _create_mbox_emmc_sandisk_report(lv_obj_t * btn)
 		"#FF8000 MLC坏块数：#            %d\n"
 		"#FF8000 固件更新计数：#         %d\n"
 		"#FF8000 固件编译时间：#         %s %s\n"
-		"#FF8000 总写入：#               %d MB\n"
+		"#FF8000 总写入：#               %dMB\n"
 		//"#FF8000 电压降：#           %d\n"
 		//"#FF8000 电压降：#           %d\n"
 		//"#FF8000 VD失败恢复：#       %d\n"
 		//"#FF8000 VD恢复操作：#       %d\n"
-		"#FF8000 SLC总写入：#            %d MB\n"
-		"#FF8000 MLC总写入：#            %d MB\n"
+		"#FF8000 SLC总写入：#            %dMB\n"
+		"#FF8000 MLC总写入：#            %dMB\n"
 		"#FF8000 大文件模式超限计数：#    %d\n"
 		"#FF8000 混合平均擦除计数：#      %d",
 
@@ -1289,9 +1289,9 @@ static lv_res_t _create_mbox_emmc_sandisk_report(lv_obj_t * btn)
 			//"#FF8000 SYS寿终前状态：#     %d\n"
 			//"#FF8000 MLC寿终前状态：#     %d\n"
 			"#FF8000 不可纠正ECC计数：#        %d\n"
-			"#FF8000 当前温度：#               %d oC\n"
+			"#FF8000 当前温度：#               %doC\n"
 			//"#FF8000 最低温度：#       %d oC\n"
-			"#FF8000 最高温度：#               %d oC\n"
+			"#FF8000 最高温度：#               %doC\n"
 			"#FF8000 EUDA健康等级：#           %d%%\n"
 			//"#FF8000 SYS健康等级：#      %d%%\n"
 			"#FF8000 MLC健康等级：#            %d%%",
@@ -1482,7 +1482,7 @@ static lv_res_t _create_mbox_benchmark(bool sd_bench)
 
 		// Calculate rate for transfer.
 		u32 rate_1k = (u64)size_bytes_seq * 1000 * 1000 * 1000 / mb_div / timer;
-		s_printf(txt_buf + strlen(txt_buf), " 顺序16MiB - 速率：#C7EA46 %3d.%02d %s#",
+		s_printf(txt_buf + strlen(txt_buf), " 顺序16MiB - 速率：#C7EA46 %3d.%02d%s#",
 			rate_1k / 1000, (rate_1k % 1000) / 10, mbs_text);
 		lv_label_set_text(lbl_status, txt_buf);
 		lv_obj_align(lbl_status, NULL, LV_ALIGN_CENTER, 0, 0);
@@ -1545,7 +1545,7 @@ static lv_res_t _create_mbox_benchmark(bool sd_bench)
 		rate_1k = (u64)size_bytes_4kb * 1000 * 1000 * 1000 / mb_div / timer;
 		u32 iops = ((u64)(sct_rem_4kb / sct_num_1mb) * 1024 * 1000 * 1000 * 1000) / (4096 / 1024) / timer / 1000;
 		s_printf(txt_buf + strlen(txt_buf), "     平均 #C7EA46 第95# #FF3C28 第5#\n");
-		s_printf(txt_buf + strlen(txt_buf), " 顺序4KB - 速率：#C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
+		s_printf(txt_buf + strlen(txt_buf), " 顺序4KB - 速率：#C7EA46 %3d.%02d%s# IOPS: #C7EA46 %4d# %4d %4d \n",
 			rate_1k / 1000, (rate_1k % 1000) / 10, mbs_text, iops, 1000000 / pct95, 1000000 / pct05);
 		lv_label_set_text(lbl_status, txt_buf);
 		lv_obj_align(lbl_status, NULL, LV_ALIGN_CENTER, 0, 0);
@@ -1619,7 +1619,7 @@ static lv_res_t _create_mbox_benchmark(bool sd_bench)
 		// Calculate rate and IOPS for transfer.
 		rate_1k = (u64)size_bytes_4kb * 1000 * 1000 * 1000 / mb_div / timer;
 		iops = ((u64)(sct_rem_4kb / sct_num_1mb) * 1024 * 1000 * 1000 * 1000) / (4096 / 1024) / timer / 1000;
-		s_printf(txt_buf + strlen(txt_buf), " 随机4KB - 速率：#C7EA46 %3d.%02d %s# IOPS: #C7EA46 %4d# %4d %4d \n",
+		s_printf(txt_buf + strlen(txt_buf), " 随机4KB - 速率：#C7EA46 %3d.%02d%s# IOPS: #C7EA46 %4d# %4d %4d \n",
 			rate_1k / 1000, (rate_1k % 1000) / 10, mbs_text, iops, 1000000 / pct95, 1000000 / pct05);
 		if (iter_curr == iters - 1)
 			txt_buf[strlen(txt_buf) - 1] = 0; // Cut off last new line.
@@ -1810,7 +1810,7 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 	}
 
 	s_printf(txt_buf + strlen(txt_buf),
-		"#00DDFF V1.%d (修订版本 1.%d)#\n%02X\n%d MB/s（%d MHz）\n%d MB/s\n%s\n%d %s\n%d MiB\nA：%s, B：%s\n%s",
+		"#00DDFF V1.%d (修订版本 1.%d)#\n%02X\n%dMB/s（%dMHz）\n%dMB/s\n%s\n%d %s\n%dMiB\nA：%s, B：%s\n%s",
 		emmc_storage.ext_csd.ext_struct, emmc_storage.ext_csd.rev,
 		emmc_storage.csd.cmdclass, speed & 0xFFFF, (speed >> 16) & 0xFFFF,
 		emmc_storage.csd.busspeed, card_type_support,
@@ -1856,10 +1856,10 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 	u32 boot_size = emmc_storage.ext_csd.boot_mult << 17;
 	u32 rpmb_size = emmc_storage.ext_csd.rpmb_mult << 17;
 	strcpy(txt_buf, "#00DDFF eMMC物理分区：#\n");
-	s_printf(txt_buf + strlen(txt_buf), "1：#96FF00 BOOT0#  大小：%6d KiB  扇区：0x%08X\n", boot_size / 1024, boot_size / EMMC_BLOCKSIZE);
-	s_printf(txt_buf + strlen(txt_buf), "2：#96FF00 BOOT1#  大小：%6d KiB  扇区：0x%08X\n", boot_size / 1024, boot_size / EMMC_BLOCKSIZE);
-	s_printf(txt_buf + strlen(txt_buf), "3：#96FF00 RPMB#   大小：%6d KiB  扇区：0x%08X\n", rpmb_size / 1024, rpmb_size / EMMC_BLOCKSIZE);
-	s_printf(txt_buf + strlen(txt_buf), "0：#96FF00 GPP#    大小：%6d MiB  扇区：0x%08X\n", emmc_storage.sec_cnt >> SECTORS_TO_MIB_COEFF, emmc_storage.sec_cnt);
+	s_printf(txt_buf + strlen(txt_buf), "1：#96FF00 BOOT0#  大小：%6dKiB  扇区：0x%08X\n", boot_size / 1024, boot_size / EMMC_BLOCKSIZE);
+	s_printf(txt_buf + strlen(txt_buf), "2：#96FF00 BOOT1#  大小：%6dKiB  扇区：0x%08X\n", boot_size / 1024, boot_size / EMMC_BLOCKSIZE);
+	s_printf(txt_buf + strlen(txt_buf), "3：#96FF00 RPMB#   大小：%6dKiB  扇区：0x%08X\n", rpmb_size / 1024, rpmb_size / EMMC_BLOCKSIZE);
+	s_printf(txt_buf + strlen(txt_buf), "0：#96FF00 GPP#    大小：%6dMiB  扇区：0x%08X\n", emmc_storage.sec_cnt >> SECTORS_TO_MIB_COEFF, emmc_storage.sec_cnt);
 	strcat(txt_buf, "\n#00DDFF GPP（eMMC用户区）分区表：#\n");
 
 	emmc_set_partition(EMMC_GPP);
@@ -1880,13 +1880,13 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 
 		if (lines == 2)
 		{
-			s_printf(txt_buf + strlen(txt_buf), "%02d：  #96FF00 %s#\n                              %6d MiB  %8Xh  %8Xh\n",
+			s_printf(txt_buf + strlen(txt_buf), "%02d：  #96FF00 %s#\n                              %6dMiB  %8Xh  %8Xh\n",
 				part->index, part->name, (part->lba_end - part->lba_start + 1) >> SECTORS_TO_MIB_COEFF,
 				part->lba_start, part->lba_end - part->lba_start + 1);
 		}
 		else
 		{
-			s_printf(txt_buf + strlen(txt_buf), "%02d：  #96FF00 %.22s# %6d MiB  %8Xh  %8Xh\n",
+			s_printf(txt_buf + strlen(txt_buf), "%02d：  #96FF00 %.22s# %6dMiB  %8Xh  %8Xh\n",
 				part->index, part->name, (part->lba_end - part->lba_start + 1) >> SECTORS_TO_MIB_COEFF,
 				part->lba_start, part->lba_end - part->lba_start + 1);
 		}
@@ -2095,7 +2095,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 	// UHS-I max power limit is 400mA, no matter what the card says.
 	u32 max_power_nominal = sd_storage.max_power > 400 ? 400 : sd_storage.max_power;
 
-	s_printf(txt_buf + strlen(txt_buf), "(%02X)\n%c%c%c%c%c\n%c%c (%04X)\n%X\n%X\n%08x\n%02d/%04d\n\n%d mW (%d mA)\n",
+	s_printf(txt_buf + strlen(txt_buf), "(%02X)\n%c%c%c%c%c\n%c%c (%04X)\n%X\n%X\n%08x\n%02d/%04d\n\n%dmW (%dmA)\n",
 		sd_storage.cid.manfid,
 		sd_storage.cid.prod_name[0], sd_storage.cid.prod_name[1], sd_storage.cid.prod_name[2],
 		sd_storage.cid.prod_name[3], sd_storage.cid.prod_name[4],
@@ -2133,7 +2133,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 	lv_obj_t * lb_desc2 = lv_label_create(desc2, lb_desc);
 
 	lv_label_set_static_text(lb_desc2,
-		"#00DDFF 卡特定数据#\n"
+		"#00DDFF 卡数据规范#\n"
 		"命令等级：\n"
 		"容量：\n"
 		"容量（逻辑区块地址）：\n"
@@ -2330,7 +2330,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 
 	lv_obj_set_width(lb_desc3, lv_obj_get_width(desc3));
 
-	s_printf(txt_buf, "\n%s\n%d %s\n%d/%d MiB",
+	s_printf(txt_buf, "\n%s\n%d %s\n%d/%dMiB",
 		sd_fs.fs_type == FS_EXFAT ? ("exFAT  "SYMBOL_SHRK) : ("FAT32"),
 		(sd_fs.csize > 1) ? (sd_fs.csize >> 1) : SD_BLOCKSIZE,
 		(sd_fs.csize > 1) ? "KiB" : "B",
@@ -2393,41 +2393,41 @@ static lv_res_t _create_window_battery_status(lv_obj_t *btn)
 	// Fuel gauge IC info.
 	max17050_get_property(MAX17050_RepSOC, &cap_pct);
 	max17050_get_property(MAX17050_RepCap, &value);
-	s_printf(txt_buf, "\n%d mAh [%d %%]\n", value, cap_pct >> 8);
+	s_printf(txt_buf, "\n%dmAh [%d %%]\n", value, cap_pct >> 8);
 
 	max17050_get_property(MAX17050_FullCAP, &value);
-	s_printf(txt_buf + strlen(txt_buf), "%d mAh\n", value);
+	s_printf(txt_buf + strlen(txt_buf), "%dmAh\n", value);
 
 	max17050_get_property(MAX17050_DesignCap, &value);
 	bool design_cap_init = value == 1000;
-	s_printf(txt_buf + strlen(txt_buf), "%s%d mAh%s\n",
+	s_printf(txt_buf + strlen(txt_buf), "%s%dmAh%s\n",
 		design_cap_init ? "#FF8000 " : "", value, design_cap_init ? " - 初始化 "SYMBOL_WARNING"#" : "");
 
 	max17050_get_property(MAX17050_Current, &value);
-	s_printf(txt_buf + strlen(txt_buf), "%d mA\n", value / 1000);
+	s_printf(txt_buf + strlen(txt_buf), "%dmA\n", value / 1000);
 
 	max17050_get_property(MAX17050_AvgCurrent, &value);
-	s_printf(txt_buf + strlen(txt_buf), "%d mA\n", value / 1000);
+	s_printf(txt_buf + strlen(txt_buf), "%dmA\n", value / 1000);
 
 	max17050_get_property(MAX17050_VCELL, &value);
 	bool voltage_empty = value < 3200;
-	s_printf(txt_buf + strlen(txt_buf), "%s%d mV%s\n",
+	s_printf(txt_buf + strlen(txt_buf), "%s%dmV%s\n",
 		voltage_empty ? "#FF8000 " : "", value, voltage_empty ? " - 低 "SYMBOL_WARNING"#" : "");
 
 	max17050_get_property(MAX17050_OCVInternal, &value);
-	s_printf(txt_buf + strlen(txt_buf), "%d mV\n", value);
+	s_printf(txt_buf + strlen(txt_buf), "%dmV\n", value);
 
 	max17050_get_property(MAX17050_MinVolt, &value);
-	s_printf(txt_buf + strlen(txt_buf), "%d mV\n", value);
+	s_printf(txt_buf + strlen(txt_buf), "%dmV\n", value);
 
 	max17050_get_property(MAX17050_MaxVolt, &value);
-	s_printf(txt_buf + strlen(txt_buf), "%d mV\n", value);
+	s_printf(txt_buf + strlen(txt_buf), "%dmV\n", value);
 
 	max17050_get_property(MAX17050_V_empty, &value);
-	s_printf(txt_buf + strlen(txt_buf), "%d mV\n", value);
+	s_printf(txt_buf + strlen(txt_buf), "%dmV\n", value);
 
 	max17050_get_property(MAX17050_TEMP, &value);
-	s_printf(txt_buf + strlen(txt_buf), "%d.%d oC\n\n\n", value / 10, (value >= 0 ? value : (~value + 1)) % 10);
+	s_printf(txt_buf + strlen(txt_buf), "%d.%doC\n\n\n", value / 10, (value >= 0 ? value : (~value + 1)) % 10);
 
 	// Main Pmic IC info.
 	value = i2c_recv_byte(I2C_5, MAX77620_I2C_ADDR, MAX77620_REG_CID4);
@@ -2492,16 +2492,16 @@ static lv_res_t _create_window_battery_status(lv_obj_t *btn)
 	// Charger IC info.
 	int iinlim = 0;
 	bq24193_get_property(BQ24193_InputCurrentLimit, &iinlim);
-	s_printf(txt_buf, "\n%d mA\n", iinlim);
+	s_printf(txt_buf, "\n%dmA\n", iinlim);
 
 	bq24193_get_property(BQ24193_SystemMinimumVoltage, &value);
-	s_printf(txt_buf + strlen(txt_buf), "%d mV\n", value);
+	s_printf(txt_buf + strlen(txt_buf), "%dmV\n", value);
 
 	bq24193_get_property(BQ24193_FastChargeCurrentLimit, &value);
-	s_printf(txt_buf + strlen(txt_buf), "%d mA\n", value);
+	s_printf(txt_buf + strlen(txt_buf), "%dmA\n", value);
 
 	bq24193_get_property(BQ24193_ChargeVoltageLimit, &value);
-	s_printf(txt_buf + strlen(txt_buf), "%d mV\n", value);
+	s_printf(txt_buf + strlen(txt_buf), "%dmV\n", value);
 
 	bq24193_get_property(BQ24193_ChargeStatus, &value);
 	switch (value)
@@ -2557,7 +2557,7 @@ static lv_res_t _create_window_battery_status(lv_obj_t *btn)
 	// Select 5V is no PD contract.
 	wattage = iinlim * (usb_pd.pdo_no ? usb_pd.selected_pdo.voltage : 5);
 
-	s_printf(txt_buf + strlen(txt_buf), "\n%d.%d W", wattage / 1000, (wattage % 1000) / 100);
+	s_printf(txt_buf + strlen(txt_buf), "\n%d.%dW", wattage / 1000, (wattage % 1000) / 100);
 
 	if (!usb_pd.pdo_no)
 		strcat(txt_buf, "\n非PD");
@@ -2570,7 +2570,7 @@ static lv_res_t _create_window_battery_status(lv_obj_t *btn)
 		bool selected =
 			usb_pd.pdos[i].amperage == usb_pd.selected_pdo.amperage &&
 			usb_pd.pdos[i].voltage == usb_pd.selected_pdo.voltage;
-		s_printf(txt_buf + strlen(txt_buf), "\n%s%d mA, %2d V%s",
+		s_printf(txt_buf + strlen(txt_buf), "\n%s%dmA, %2d V%s",
 			selected ? "#D4FF00 " : "",
 			usb_pd.pdos[i].amperage, usb_pd.pdos[i].voltage,
 			selected ? "#" : "");
@@ -2729,7 +2729,7 @@ void create_tab_info(lv_theme_t *th, lv_obj_t *parent)
 	lv_label_set_static_text(label_txt4,
 		"查看和提取缓存的#C7EA46 Fuses#和#C7EA46 KFuses#信息。\n"
 		"Fuses包含了SoC/SKU和KFuses HDCP的密钥信息。\n"
-		"你也可以查看#C7EA46 内存#，#C7EA46 屏幕#和#C7EA46 触控面板#的信息。");
+		"您也可以查看#C7EA46 内存#，#C7EA46 屏幕#和#C7EA46 触控面板#的信息。");
 	lv_obj_set_style(label_txt4, &hint_small_style);
 	lv_obj_align(label_txt4, btn3, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
 
