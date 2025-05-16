@@ -2330,7 +2330,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 
 	lv_obj_set_width(lb_desc3, lv_obj_get_width(desc3));
 
-	s_printf(txt_buf, "\n%s\n%d %s\n%d/%dMiB",
+	s_printf(txt_buf, "\n%s\n%d%s\n%d/%dMiB",
 		sd_fs.fs_type == FS_EXFAT ? ("exFAT  "SYMBOL_SHRK) : ("FAT32"),
 		(sd_fs.csize > 1) ? (sd_fs.csize >> 1) : SD_BLOCKSIZE,
 		(sd_fs.csize > 1) ? "KiB" : "B",
