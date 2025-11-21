@@ -855,7 +855,11 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 	color_test.header2 = h2;
 
 	lv_obj_t *lbl_sample = lv_label_create(h2, NULL);
+<<<<<<< HEAD
 	lv_label_set_static_text(lbl_sample, "变音符样本：");
+=======
+	lv_label_set_static_text(lbl_sample, "样例：");
+>>>>>>> d0deb9c4 (full Chinese lang support)
 
 	lv_obj_t *lbl_test = lv_label_create(h2, NULL);
 	lv_label_set_long_mode(lbl_test, LV_LABEL_LONG_BREAK);
@@ -1037,9 +1041,13 @@ static lv_res_t _create_mbox_clock_edit(lv_obj_t *btn)
 	lv_mbox_set_recolor_text(mbox, true);
 	lv_obj_set_width(mbox, LV_HOR_RES / 9 * 6);
 
+<<<<<<< HEAD
 	lv_mbox_set_text(mbox, "请为Nyx输入#C7EA46 日期#和#C7EA46 时间#，\n"
 						   "此信息将应用于所有文件操作及菜单功能。\n"
 						   "此操作不会修改实际的硬件时钟！");
+=======
+	lv_mbox_set_text(mbox, "输入Nyx的#C7EA46 日期#和#C7EA46 时间# \n这并不会改变真实的硬件时钟！");
+>>>>>>> d0deb9c4 (full Chinese lang support)
 
 	lv_obj_t *padding = lv_cont_create(mbox, NULL);
 	lv_cont_set_fit(padding, true, false);
@@ -1527,7 +1535,11 @@ lv_res_t create_win_nyx_options(lv_obj_t *parrent_btn)
 
 	lv_obj_t *label_txt2 = lv_label_create(sw_h2, NULL);
 	lv_label_set_recolor(label_txt2, true);
+<<<<<<< HEAD
 	lv_label_set_static_text(label_txt2, "在Nyx中自定义 #C7EA46 主题# 和 #C7EA46 强调色# 的颜色。\n");
+=======
+	lv_label_set_static_text(label_txt2, "在Nyx中自定义#C7EA46 主题#和#C7EA46 强调色#。\n");
+>>>>>>> d0deb9c4 (full Chinese lang support)
 	lv_obj_set_style(label_txt2, &hint_small_style);
 	lv_obj_align(label_txt2, btn, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3 - 8);
 
@@ -1713,7 +1725,11 @@ void create_tab_options(lv_theme_t *th, lv_obj_t *parent)
 	lv_label_set_recolor(label_btn, true);
 	lv_btn_set_fit(btn, true, true);
 	lv_btn_set_toggle(btn, true);
+<<<<<<< HEAD
 	lv_label_set_static_text(label_btn, SYMBOL_GPS" 自动启动 #00FFC9   开启 #");
+=======
+	lv_label_set_static_text(label_btn, SYMBOL_GPS" 自动启动 #00FFC9   ON #");
+>>>>>>> d0deb9c4 (full Chinese lang support)
 	lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, _autoboot_hide_delay_action);
 	lv_obj_align(btn, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, -LV_DPI / 18 + 6);
 	lv_btn_set_fit(btn, false, false);

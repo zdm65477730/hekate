@@ -57,7 +57,7 @@ static void _create_window_emummc()
 
 	lv_obj_t *win;
 	if (!mbr_ctx.part_idx)
-		win = nyx_create_standard_window(SYMBOL_DRIVE"  创建SD卡文件虚拟MM", _action_emummc_window_close);
+		win = nyx_create_standard_window(SYMBOL_DRIVE"  创建SD卡文件虚拟MMC", _action_emummc_window_close);
 	else
 		win = nyx_create_standard_window(SYMBOL_DRIVE"  创建SD卡分区虚拟MMC", _action_emummc_window_close);
 
@@ -1174,7 +1174,7 @@ lv_res_t create_win_emummc_tools(lv_obj_t *btn)
 	lv_obj_t *label_txt4 = lv_label_create(h2, NULL);
 	lv_label_set_recolor(label_txt4, true);
 	lv_label_set_static_text(label_txt4,
-		"允许您创建一个新的使用 #C7EA46 SD卡文件# 或 #C7EA46 SD卡分区#"
+		"允许您创建一个新的使用 #C7EA46 SD卡文件#或 #C7EA46 SD卡分区#"
 		"的虚拟MMC系统。\n您可以从eMMC或eMMC备份创建它。\n");
 
 	lv_obj_set_style(label_txt4, &hint_small_style);
@@ -1191,7 +1191,7 @@ lv_res_t create_win_emummc_tools(lv_obj_t *btn)
 	label_txt4 = lv_label_create(h2, NULL);
 	lv_label_set_recolor(label_txt4, true);
 	lv_label_set_static_text(label_txt4,
-		"将备份文件迁移到 #C7EA46 SD卡文件虚拟MMC# 或修复一个已存在的\n#C7EA46 SD卡分区虚拟MMC#。\n");
+		"将备份文件迁移到 #C7EA46 SD卡文件虚拟MMC#或修复一个已存在的\n #C7EA46 SD卡分区虚拟MMC#。\n");
 	lv_obj_set_style(label_txt4, &hint_small_style);
 	lv_obj_align(label_txt4, btn4, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
 

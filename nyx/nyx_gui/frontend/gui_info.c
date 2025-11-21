@@ -1048,7 +1048,7 @@ static lv_res_t _create_window_hw_info_status(lv_obj_t *btn)
 	if (touch_clone_oled)
 		display_id = 0x10000;
 
-	strcat(txt_buf, "#00DDFF 显示面板：:#\n#FF8000 型号：# ");
+	strcat(txt_buf, "#00DDFF 显示面板：:#\n #FF8000 型号：# ");
 
 	switch (display_id)
 	{
@@ -2475,7 +2475,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 		strcat(txt_buf, "威刚 ");
 		break;
 	case 0x22:
-		strcat(txt_buf, "Kowin"); // #E: Digiera.
+		strcat(txt_buf, "康盈半导体 "); // #E: Digiera.
 		break;
 	case 0x27:
 		strcat(txt_buf, "群联 ");
