@@ -2626,7 +2626,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 	switch (sd_storage.csd.write_protect)
 	{
 	case 0:
-		wp_info = "Inactive";
+		wp_info = "未启用";
 		break;
 	case 1:
 		wp_info = "临时";

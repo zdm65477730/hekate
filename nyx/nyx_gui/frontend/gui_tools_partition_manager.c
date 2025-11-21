@@ -3193,7 +3193,7 @@ lv_res_t create_window_partition_manager(bool emmc)
 	lv_obj_align(lbl_l4t, lbl_emu, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
 
 	lv_obj_t *lbl_and = lv_label_create(h1, lbl_hos);
-	lv_label_set_static_text(lbl_and, "#FF8000 "SYMBOL_DOT" 安卓系统（用户）#");
+	lv_label_set_static_text(lbl_and, "#FF8000 "SYMBOL_DOT" Android系统（用户）#");
 	lv_obj_align(lbl_and, lbl_l4t, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
 
 	// Create HOS size slider. Non-interactive.
@@ -3291,7 +3291,7 @@ lv_res_t create_window_partition_manager(bool emmc)
 		lv_label_set_static_text(lbl_notes,
 			"注1：最多只能备份#C7EA46 1.2GB#。如果超过，下一步会要求您手动备份。\n"
 			"注2：调整过大小的虚拟MMC会格式化用户分区。可以使用存档管理器将用户存档移动过来。\n"
-			"注3：若找到适配的分区及安装文件，#C7EA46 刷写Linux#和#C7EA46 刷写安卓#功能将自动刷写对应文件。\n");
+			"注3：若找到适配的分区及安装文件， #C7EA46 刷写Linux#和 #C7EA46 刷写Android#功能将自动刷写对应文件。\n");
 		lv_obj_align(lbl_notes, lbl_and, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 6 * 2);
 	}
 	else
@@ -3299,7 +3299,7 @@ lv_res_t create_window_partition_manager(bool emmc)
 		lv_label_set_static_text(lbl_notes,
 			"注1：所选分区之后存在的任何分区，都将从分区表中移除。\n"
 			"注2：官方系统用户分区将被格式化。可使用存档管理器迁移存档数据。\n"
-			"注3：若找到适配的分区及安装文件，#C7EA46 刷写Linux#和#C7EA46 刷写安卓#功能将自动刷写对应文件。\n");
+			"注3：若找到适配的分区及安装文件， #C7EA46 刷写Linux#和 #C7EA46 刷写安卓#功能将自动刷写对应文件。\n");
 		lv_obj_align(lbl_notes, lbl_and, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 6 * 4);
 	}
 
@@ -3344,7 +3344,7 @@ lv_res_t create_window_partition_manager(bool emmc)
 	switch (part_type_and)
 	{
 	case 0: // Disable Flash Android button if partition not found.
-		lv_label_set_static_text(label_btn, SYMBOL_DOWNLOAD"  刷写安卓");
+		lv_label_set_static_text(label_btn, SYMBOL_DOWNLOAD"  刷写Android");
 		lv_obj_set_click(btn_flash_android, false);
 		lv_btn_set_state(btn_flash_android, LV_BTN_STATE_INA);
 		break;
@@ -3352,7 +3352,7 @@ lv_res_t create_window_partition_manager(bool emmc)
 		lv_label_set_static_text(label_btn, SYMBOL_DOWNLOAD"  刷写Android 11");
 		break;
 	case 2: // Android 13+
-		lv_label_set_static_text(label_btn, SYMBOL_DOWNLOAD"  刷写安卓13+");
+		lv_label_set_static_text(label_btn, SYMBOL_DOWNLOAD"  刷写Android 13+");
 		break;
 	}
 	lv_obj_align(btn_flash_android, btn_flash_l4t, LV_ALIGN_OUT_RIGHT_MID, LV_DPI / 3, 0);

@@ -1038,7 +1038,7 @@ static int _restore_emmc_part(emmc_tool_gui_t *gui, char *sd_path, int active_pa
 			{
 				if (!gui->raw_emummc)
 				{
-					s_printf(gui->txt_buf, "\n#FFDD00 错误，文件# #FFDD00 %s # #FFDD00 未找到。#\n\n", outFilename);
+					s_printf(gui->txt_buf, "\n #FFDD00 错误，文件# #FFDD00 %s # #FFDD00 未找到。#\n\n", outFilename);
 					lv_label_ins_text(gui->label_log, LV_LABEL_POS_LAST, gui->txt_buf);
 					manual_system_maintenance(true);
 

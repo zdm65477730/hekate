@@ -1665,16 +1665,10 @@ static void _create_tab_tools_arc_rcm_pkg12(lv_theme_t *th, lv_obj_t *parent)
 	lv_obj_t *label_txt2 = lv_label_create(h1, NULL);
 	lv_label_set_recolor(label_txt2, true);
 	lv_label_set_static_text(label_txt2,
-<<<<<<< HEAD
-		"允许你修复所有文件夹的归档位（archive bit），包括\n"
+		"允许你修复所有文件夹的归档位，包括\n"
 		"根目录和虚拟MMC的'Nintendo'文件夹。\n"
-		"#C7EA46 它会为命名为##FF8000 .[ext]# 的文件夹设置归档位。\n"
+		"#C7EA46 它会为命名为# #FF8000 .[扩展名]# 的文件夹设置归档位。\n"
 		"#FF8000 当你遇到损坏报错时，请使用该选项。#");
-=======
-		"可修复所有文件夹的存档位，包括根目录与虚拟系统（emuMMC）内的Nintendo文件夹。\n"
-		"#C7EA46 该功能会为名称以##FF8000 .[扩展名]#格式命名的文件夹设置存档位。\n"
-		"#FF8000 当出现文件损坏报错提示时，可使用此选项。#");
->>>>>>> d0deb9c4 (full Chinese lang support)
 	lv_obj_set_style(label_txt2, &hint_small_style);
 	lv_obj_align(label_txt2, btn, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3);
 
