@@ -29755,7 +29755,7 @@ lv_font_t ubuntu_mono =
 #elif USE_UBUNTU_MONO == 8
     .bpp = 8,				/*Bit per pixel*/
 #endif
-    .monospace = 10,		/*Fix width (0: if not used)*/
+    .monospace = 0,		/*Fix width (0: if not used)*/
     .next_page = NULL,		/*Pointer to a font extension*/
 };
 
