@@ -727,7 +727,7 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 	color_test.header1 = h1;
 
 	lv_obj_t *acc_label = lv_label_create(h1, NULL);
-	lv_label_set_static_text(acc_label, "Accent color:");
+	lv_label_set_static_text(acc_label, "强调色：");
 
 	// Create color preset buttons.
 	lv_obj_t *color_btn = lv_btn_create(h1, NULL);
@@ -768,7 +768,7 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 	color_test.hue_label = hue_text_label;
 
 	lv_obj_t *bg_label = lv_label_create(win, NULL);
-	lv_label_set_static_text(bg_label, "Theme color:");
+	lv_label_set_static_text(bg_label, "主题颜色：");
 	lv_obj_align(bg_label, h_slider, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI * 6 / 25);
 
 	// Create red slider.
@@ -826,7 +826,7 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 	// Create theme color buttons.
 	lv_obj_t *btn_reset = lv_btn_create(win, NULL);
 	lv_obj_t *label_btn = lv_label_create(btn_reset, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_REFRESH" Grey");
+	lv_label_set_static_text(label_btn, SYMBOL_REFRESH" 灰色");
 	lv_btn_set_fit(btn_reset, false, true);
 	lv_obj_set_width(btn_reset, LV_DPI * 5 / 3);
 	lv_btn_set_action(btn_reset, LV_BTN_ACTION_CLICK, _preset_bg_reset);
@@ -835,14 +835,14 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 
 	lv_obj_t *btn_black = lv_btn_create(win, btn_reset);
 	label_btn = lv_label_create(btn_black, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_BRIGHTNESS" Black");
+	lv_label_set_static_text(label_btn, SYMBOL_BRIGHTNESS" 黑色");
 	lv_btn_set_action(btn_black, LV_BTN_ACTION_CLICK, _preset_bg_black);
 	lv_obj_align(btn_black, btn_reset, LV_ALIGN_OUT_RIGHT_TOP, LV_DPI / 5, 0);
 	color_test.btn_black = btn_black;
 
 	lv_obj_t *btn_apply = lv_btn_create(win, btn_reset);
 	label_btn = lv_label_create(btn_apply, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_LIST" Custom Color");
+	lv_label_set_static_text(label_btn, SYMBOL_LIST" 自定义颜色");
 	lv_obj_set_width(btn_apply, LV_DPI * 10 / 3 + LV_DPI / 5);
 	lv_btn_set_action(btn_apply, LV_BTN_ACTION_CLICK, _preset_bg_apply);
 	lv_obj_align(btn_apply, btn_reset, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 7);
@@ -855,11 +855,7 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 	color_test.header2 = h2;
 
 	lv_obj_t *lbl_sample = lv_label_create(h2, NULL);
-<<<<<<< HEAD
 	lv_label_set_static_text(lbl_sample, "变音符样本：");
-=======
-	lv_label_set_static_text(lbl_sample, "样例：");
->>>>>>> d0deb9c4 (full Chinese lang support)
 
 	lv_obj_t *lbl_test = lv_label_create(h2, NULL);
 	lv_label_set_long_mode(lbl_test, LV_LABEL_LONG_BREAK);
@@ -1041,13 +1037,9 @@ static lv_res_t _create_mbox_clock_edit(lv_obj_t *btn)
 	lv_mbox_set_recolor_text(mbox, true);
 	lv_obj_set_width(mbox, LV_HOR_RES / 9 * 6);
 
-<<<<<<< HEAD
 	lv_mbox_set_text(mbox, "请为Nyx输入#C7EA46 日期#和#C7EA46 时间#，\n"
 						   "此信息将应用于所有文件操作及菜单功能。\n"
 						   "此操作不会修改实际的硬件时钟！");
-=======
-	lv_mbox_set_text(mbox, "输入Nyx的#C7EA46 日期#和#C7EA46 时间# \n这并不会改变真实的硬件时钟！");
->>>>>>> d0deb9c4 (full Chinese lang support)
 
 	lv_obj_t *padding = lv_cont_create(mbox, NULL);
 	lv_cont_set_fit(padding, true, false);
@@ -1535,11 +1527,7 @@ lv_res_t create_win_nyx_options(lv_obj_t *parrent_btn)
 
 	lv_obj_t *label_txt2 = lv_label_create(sw_h2, NULL);
 	lv_label_set_recolor(label_txt2, true);
-<<<<<<< HEAD
 	lv_label_set_static_text(label_txt2, "在Nyx中自定义 #C7EA46 主题# 和 #C7EA46 强调色# 的颜色。\n");
-=======
-	lv_label_set_static_text(label_txt2, "在Nyx中自定义#C7EA46 主题#和#C7EA46 强调色#。\n");
->>>>>>> d0deb9c4 (full Chinese lang support)
 	lv_obj_set_style(label_txt2, &hint_small_style);
 	lv_obj_align(label_txt2, btn, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 3 - 8);
 
@@ -1725,11 +1713,7 @@ void create_tab_options(lv_theme_t *th, lv_obj_t *parent)
 	lv_label_set_recolor(label_btn, true);
 	lv_btn_set_fit(btn, true, true);
 	lv_btn_set_toggle(btn, true);
-<<<<<<< HEAD
 	lv_label_set_static_text(label_btn, SYMBOL_GPS" 自动启动 #00FFC9   开启 #");
-=======
-	lv_label_set_static_text(label_btn, SYMBOL_GPS" 自动启动 #00FFC9   ON #");
->>>>>>> d0deb9c4 (full Chinese lang support)
 	lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, _autoboot_hide_delay_action);
 	lv_obj_align(btn, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, -LV_DPI / 18 + 6);
 	lv_btn_set_fit(btn, false, false);

@@ -1600,7 +1600,7 @@ static lv_res_t logs_onoff_toggle(lv_obj_t *btn)
 	}
 	else
 	{
-		s_printf(label_text, "%s%s%s", label_text, text_color, " 开启#");
+		s_printf(label_text, "%s%s%s", label_text, text_color, " 开启 #");
 		lv_label_set_text(label_btn, label_text);
 	}
 
