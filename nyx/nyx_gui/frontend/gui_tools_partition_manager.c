@@ -2309,19 +2309,19 @@ static lv_res_t _action_slider_emu(lv_obj_t *slider)
 		part_info.emu_size = size;
 		part_info.hos_size = hos_size;
 
-		s_printf(lbl_text, "#96FF00 %4d GiB#", hos_size >> 10);
+		s_printf(lbl_text, "#96FF00 %4dGiB#", hos_size >> 10);
 		lv_label_set_text(part_info.lbl_hos, lbl_text);
 		lv_bar_set_value(part_info.slider_bar_hos, hos_size >> 10);
 
 		if (!part_info.emu_double)
 		{
 			if (slide_val != EMU_SLIDER_1X_FULL)
-				s_printf(lbl_text, "#FF3C28 %4d GiB#", size >> 10);
+				s_printf(lbl_text, "#FF3C28 %4dGiB#", size >> 10);
 			else
-				s_printf(lbl_text, "#FF3C28 %d FULL#", size >> 10);
+				s_printf(lbl_text, "#FF3C28 %d 满容量#", size >> 10);
 		}
 		else
-			s_printf(lbl_text, "#FFDD00 2x##FF3C28 %d GiB#", size >> 11);
+			s_printf(lbl_text, "#FFDD00 2x##FF3C28 %dGiB#", size >> 11);
 		lv_label_set_text(part_info.lbl_emu, lbl_text);
 	}
 	else
@@ -2388,10 +2388,10 @@ static lv_res_t _action_slider_l4t(lv_obj_t *slider)
 	part_info.l4t_size = size;
 	part_info.hos_size = hos_size;
 
-	s_printf(lbl_text, "#96FF00 %4d GiB#", hos_size >> 10);
+	s_printf(lbl_text, "#96FF00 %4dGiB#", hos_size >> 10);
 	lv_label_set_text(part_info.lbl_hos, lbl_text);
 	lv_bar_set_value(part_info.slider_bar_hos, hos_size >> 10);
-	s_printf(lbl_text, "#00DDFF %4d GiB#", size >> 10);
+	s_printf(lbl_text, "#00DDFF %4dGiB#", size >> 10);
 	lv_label_set_text(part_info.lbl_l4t, lbl_text);
 
 	_update_partition_bar();
@@ -2435,10 +2435,10 @@ static lv_res_t _action_slider_and(lv_obj_t *slider)
 	part_info.and_size = and_size;
 	part_info.hos_size = hos_size;
 
-	s_printf(lbl_text, "#96FF00 %4d GiB#", hos_size >> 10);
+	s_printf(lbl_text, "#96FF00 %4dGiB#", hos_size >> 10);
 	lv_label_set_text(part_info.lbl_hos, lbl_text);
 	lv_bar_set_value(part_info.slider_bar_hos, hos_size >> 10);
-	s_printf(lbl_text, "#FF8000 %4d GiB#", user_size >> 10);
+	s_printf(lbl_text, "#FF8000 %4dGiB#", user_size >> 10);
 	lv_label_set_text(part_info.lbl_and, lbl_text);
 
 	_update_partition_bar();
@@ -3255,7 +3255,7 @@ lv_res_t create_window_partition_manager(bool emmc)
 	lv_obj_t *lbl_sl_hos = lv_label_create(cont_lbl, NULL);
 	lv_label_set_recolor(lbl_sl_hos, true);
 	lv_label_set_align(lbl_sl_hos, LV_LABEL_ALIGN_RIGHT);
-	s_printf(txt_buf, "#96FF00 %4d GiB#", (part_info.total_sct - AU_ALIGN_SECTORS) >> 11 >> 10);
+	s_printf(txt_buf, "#96FF00 %4dGiB#", (part_info.total_sct - AU_ALIGN_SECTORS) >> 11 >> 10);
 	lv_label_set_text(lbl_sl_hos, txt_buf);
 	lv_obj_align(lbl_sl_hos, cont_lbl, LV_ALIGN_IN_TOP_RIGHT, 0, 0);
 	part_info.lbl_hos = lbl_sl_hos;
@@ -3265,20 +3265,20 @@ lv_res_t create_window_partition_manager(bool emmc)
 	if (!emmc)
 	{
 		lv_obj_t *lbl_sl_emu = lv_label_create(cont_lbl, lbl_sl_hos);
-		lv_label_set_text(lbl_sl_emu, "#FF3C28    0 GiB#");
+		lv_label_set_text(lbl_sl_emu, "#FF3C28    0GiB#");
 		lv_obj_align(lbl_sl_emu, lbl_sl_hos, LV_ALIGN_OUT_BOTTOM_RIGHT, 0, LV_DPI / 3);
 		part_info.lbl_emu = lbl_sl_emu;
 	}
 
 	// Create L4T size label.
 	lv_obj_t *lbl_sl_l4t = lv_label_create(cont_lbl, lbl_sl_hos);
-	lv_label_set_text(lbl_sl_l4t, "#00DDFF    0 GiB#");
+	lv_label_set_text(lbl_sl_l4t, "#00DDFF    0GiB#");
 	lv_obj_align(lbl_sl_l4t, part_info.lbl_emu, LV_ALIGN_OUT_BOTTOM_RIGHT, 0, LV_DPI / 3);
 	part_info.lbl_l4t = lbl_sl_l4t;
 
 	// Create Android size label.
 	lv_obj_t *lbl_sl_and = lv_label_create(cont_lbl, lbl_sl_hos);
-	lv_label_set_text(lbl_sl_and, "#FF8000    0 GiB#");
+	lv_label_set_text(lbl_sl_and, "#FF8000    0GiB#");
 	lv_obj_align(lbl_sl_and, lbl_sl_l4t, LV_ALIGN_OUT_BOTTOM_RIGHT, 0, LV_DPI / 3);
 	part_info.lbl_and = lbl_sl_and;
 
