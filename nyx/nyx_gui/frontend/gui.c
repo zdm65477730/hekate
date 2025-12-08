@@ -746,22 +746,22 @@ lv_res_t nyx_generic_onoff_toggle(lv_obj_t *btn)
 
 		if (!(lv_btn_get_state(btn) & LV_BTN_STATE_TGL_REL))
 		{
-			strcat(label_text, "#D0D0D0    OFF#");
+			strcat(label_text, "#D0D0D0    关闭#");
 			lv_label_set_text(label_btn, label_text);
 		}
 		else
 		{
-			s_printf(label_text, "%s%s%s", label_text, text_color, "    ON #");
+			s_printf(label_text, "%s%s%s", label_text, text_color, "    开启 #");
 			lv_label_set_text(label_btn, label_text);
 		}
 	}
 	else
 	{
 		if (!(lv_btn_get_state(btn) & LV_BTN_STATE_TGL_REL))
-			lv_label_set_text(label_btn, "#D0D0D0 OFF#");
+			lv_label_set_text(label_btn, "#D0D0D0 关闭#");
 		else
 		{
-			s_printf(label_text, "%s%s", text_color, " ON #");
+			s_printf(label_text, "%s%s", text_color, " 开启 #");
 			lv_label_set_text(label_btn, label_text);
 		}
 	}
@@ -1196,7 +1196,7 @@ void nyx_create_onoff_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn, co
 
 	lv_label_set_text(label_btn, btn_name);
 
-	lv_label_set_text(label_btnsw, "#D0D0D0 OFF#");
+	lv_label_set_text(label_btnsw, "#D0D0D0 关闭#");
 	lv_obj_align(label_btn, btn, LV_ALIGN_IN_LEFT_MID, LV_DPI / 4, 0);
 	lv_obj_align(label_btnsw, btn, LV_ALIGN_IN_RIGHT_MID, -LV_DPI / 4, -LV_DPI / 10);
 
@@ -1555,12 +1555,12 @@ static lv_res_t logs_onoff_toggle(lv_obj_t *btn)
 
 	if (!launch_logs_enable)
 	{
-		strcat(label_text, "#D0D0D0 OFF#");
+		strcat(label_text, "#D0D0D0 关闭#");
 		lv_label_set_text(label_btn, label_text);
 	}
 	else
 	{
-		s_printf(label_text, "%s%s%s", label_text, text_color, " ON #");
+		s_printf(label_text, "%s%s%s", label_text, text_color, " 开启 #");
 		lv_label_set_text(label_btn, label_text);
 	}
 
