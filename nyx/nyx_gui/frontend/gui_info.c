@@ -728,7 +728,7 @@ static lv_res_t _create_window_hw_info_status(lv_obj_t *btn)
 		((!h_cfg.t210b01 && dram_id_adj == LPDDR4_ICOSA_8GB_SAMSUNG_K4FBE3D4HM_MGXX) ||
 		 ( h_cfg.t210b01 && dram_id_adj == LPDDR4X_AULA_8GB_SAMSUNG_K4UBE3D4AA_MGCL))
 	   )
-		strcpy(dram_model, "#FF8000 Forced DRAM Config 8GB#");
+		strcpy(dram_model, "#FF8000 强制DRAM配置：8GB#");
 
 	// Count burnt fuses.
 	u8 burnt_fuses_7 = bit_count(fuse_read_odm(7));
@@ -1234,7 +1234,7 @@ static lv_res_t _create_window_hw_info_status(lv_obj_t *btn)
 
 		touch_panel_info_t *touch_panel = touch_get_panel_vendor();
 		if (touch_clone_oled)
-			strcat(txt_buf, "#FFDD00 OEM Clone TSP#");
+			strcat(txt_buf, "#FFDD00 OEM克隆触摸屏面板#");
 		else if (touch_panel)
 		{
 			if ((u8)touch_panel->idx == (u8)-2) // Touch panel not found, print gpios.
@@ -1312,7 +1312,7 @@ static lv_res_t _create_window_hw_info_status(lv_obj_t *btn)
 			break;
 
 		case 0xFFFFFFFF: // Custom for OLED clone.
-			strcat(txt_buf, "Clone");
+			strcat(txt_buf, "克隆");
 			panel_ic_paired = true;
 			break;
 
@@ -2023,7 +2023,7 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 	u32 life_a = emmc_storage.ext_csd.dev_life_est_a;
 	u32 life_b = emmc_storage.ext_csd.dev_life_est_b;
 	u16 card_type = emmc_storage.ext_csd.card_type;
-	char *max_bus_support = "Unknown";
+	char *max_bus_support = "未知";
 
 	// Identify manufacturer. Only official eMMCs.
 	switch (emmc_storage.cid.manfid)
@@ -2039,7 +2039,7 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 		lv_win_add_btn(win, NULL, SYMBOL_FILE_ALT" 设备报告", _create_mbox_emmc_sandisk_report);
 		break;
 	case 0x89: // Unofficial.
-		strcat(txt_buf, "Silicon Motion ");
+		strcat(txt_buf, "慧荣 ");
 		break;
 	case 0x90:
 		strcat(txt_buf, "SK海力士 ");
@@ -2078,27 +2078,27 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 	{
 		if (emmc_storage.ext_csd.bkops_en & EXT_CSD_BKOPS_AUTO)
 		{
-			strcpy(bkops, "Auto");
+			strcpy(bkops, "自动");
 			if (emmc_storage.ext_csd.bkops_en & EXT_CSD_BKOPS_MANUAL)
-				strcat(bkops, " + Manual");
+				strcat(bkops, " + 手动");
 		}
 		else
-			strcpy(bkops, "Off");
-		strcat(bkops, ": ");
+			strcpy(bkops, "关闭");
+		strcat(bkops, "：");
 
 		switch (emmc_storage.raw_ext_csd[EXT_CSD_BKOPS_STATUS])
 		{
 		case 0:
-			strcat(bkops, "OK");
+			strcat(bkops, "正常");
 			break;
 		case 1:
-			strcat(bkops, "Minor");
+			strcat(bkops, "轻微");
 			break;
 		case 2:
-			strcat(bkops, "#FFDD00 Degraded#");
+			strcat(bkops, "#FFDD00 已降级#");
 			break;
 		case 3:
-			strcat(bkops, "#FFDD00 Critical#");
+			strcat(bkops, "#FFDD00 严重#");
 			break;
 		}
 	}
@@ -2155,7 +2155,7 @@ static lv_res_t _create_window_emmc_info_status(lv_obj_t *btn)
 		"生产日期：\n\n"
 		"#00DDFF 扩展CSD：#\n"
 		"命令等级：\n"
-		"最大速率：\n"
+		"最大总线速率：\n"
 		"当前速率：\n"
 		"加强区域：\n"
 		"写缓存：\n\n"

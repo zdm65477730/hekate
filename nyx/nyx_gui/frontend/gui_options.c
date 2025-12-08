@@ -727,7 +727,7 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 	color_test.header1 = h1;
 
 	lv_obj_t *acc_label = lv_label_create(h1, NULL);
-	lv_label_set_static_text(acc_label, "Accent color:");
+	lv_label_set_static_text(acc_label, "强调色：");
 
 	// Create color preset buttons.
 	lv_obj_t *color_btn = lv_btn_create(h1, NULL);
@@ -768,7 +768,7 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 	color_test.hue_label = hue_text_label;
 
 	lv_obj_t *bg_label = lv_label_create(win, NULL);
-	lv_label_set_static_text(bg_label, "Theme color:");
+	lv_label_set_static_text(bg_label, "主题颜色：");
 	lv_obj_align(bg_label, h_slider, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI * 6 / 25);
 
 	// Create red slider.
@@ -826,7 +826,7 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 	// Create theme color buttons.
 	lv_obj_t *btn_reset = lv_btn_create(win, NULL);
 	lv_obj_t *label_btn = lv_label_create(btn_reset, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_REFRESH" Grey");
+	lv_label_set_static_text(label_btn, SYMBOL_REFRESH" 灰色");
 	lv_btn_set_fit(btn_reset, false, true);
 	lv_obj_set_width(btn_reset, LV_DPI * 5 / 3);
 	lv_btn_set_action(btn_reset, LV_BTN_ACTION_CLICK, _preset_bg_reset);
@@ -835,14 +835,14 @@ static lv_res_t _create_window_nyx_colors(lv_obj_t *btn)
 
 	lv_obj_t *btn_black = lv_btn_create(win, btn_reset);
 	label_btn = lv_label_create(btn_black, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_BRIGHTNESS" Black");
+	lv_label_set_static_text(label_btn, SYMBOL_BRIGHTNESS" 黑色");
 	lv_btn_set_action(btn_black, LV_BTN_ACTION_CLICK, _preset_bg_black);
 	lv_obj_align(btn_black, btn_reset, LV_ALIGN_OUT_RIGHT_TOP, LV_DPI / 5, 0);
 	color_test.btn_black = btn_black;
 
 	lv_obj_t *btn_apply = lv_btn_create(win, btn_reset);
 	label_btn = lv_label_create(btn_apply, NULL);
-	lv_label_set_static_text(label_btn, SYMBOL_LIST" Custom Color");
+	lv_label_set_static_text(label_btn, SYMBOL_LIST" 自定义颜色");
 	lv_obj_set_width(btn_apply, LV_DPI * 10 / 3 + LV_DPI / 5);
 	lv_btn_set_action(btn_apply, LV_BTN_ACTION_CLICK, _preset_bg_apply);
 	lv_obj_align(btn_apply, btn_reset, LV_ALIGN_OUT_BOTTOM_LEFT, 0, LV_DPI / 7);
@@ -1711,7 +1711,7 @@ void create_tab_options(lv_theme_t *th, lv_obj_t *parent)
 	lv_label_set_recolor(label_btn, true);
 	lv_btn_set_fit(btn, true, true);
 	lv_btn_set_toggle(btn, true);
-	lv_label_set_static_text(label_btn, SYMBOL_GPS" 自动启动 #00FFC9   ON #");
+	lv_label_set_static_text(label_btn, SYMBOL_GPS" 自动启动 #00FFC9   开启 #");
 	lv_btn_set_action(btn, LV_BTN_ACTION_CLICK, _autoboot_hide_delay_action);
 	lv_obj_align(btn, label_sep, LV_ALIGN_OUT_BOTTOM_LEFT, LV_DPI / 4, -LV_DPI / 18 + 6);
 	lv_btn_set_fit(btn, false, false);
