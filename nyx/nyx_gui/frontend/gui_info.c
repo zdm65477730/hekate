@@ -538,7 +538,7 @@ static lv_res_t _create_window_hw_info_status(lv_obj_t *btn)
 		"#FF8000 SoC：#\n"
 		"#FF8000 SKU：#\n"
 		"#FF8000 DRAM ID：#\n"
-		"#FF8000 熔断熔丝（ODM 7/6）：#\n"
+		"#FF8000 熔断数（ODM 7/6）：#\n"
 		"ODM字段（4/6/7）：\n"
 		"安全引导密钥（SBK）：\n"
 		"设备密钥（DK）：\n"
