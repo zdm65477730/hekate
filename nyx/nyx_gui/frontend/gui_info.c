@@ -2552,7 +2552,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 	f_getfree("", &sd_fs.free_clst, NULL);
 
 	lv_label_set_text(lb_desc3,
-		"#00DDFF 找到FAT文件系统：#\n"
+		"#00DDFF 找到文件系统：#\n"
 		"文件系统：\n"
 		"簇：\n"
 		"可用大小/总大小："
