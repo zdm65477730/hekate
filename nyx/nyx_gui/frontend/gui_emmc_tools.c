@@ -281,7 +281,7 @@ lv_res_t create_window_backup_restore_tool(lv_obj_t *btn)
 	lv_obj_t *win;
 
 	emmc_btn_ctxt.restore = false;
-	if (strcmp(lv_label_get_text(lv_obj_get_child(btn, NULL)), SYMBOL_UPLOAD" 备份eMMC"))
+	if (strcmp(lv_label_get_text(lv_obj_get_child(btn, NULL)), SYMBOL_UPLOAD"  备份eMMC"))
 		emmc_btn_ctxt.restore = true;
 
 	if (!emmc_btn_ctxt.restore)
