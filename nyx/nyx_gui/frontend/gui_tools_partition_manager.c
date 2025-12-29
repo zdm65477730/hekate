@@ -1605,7 +1605,7 @@ static lv_res_t _sd_create_mbox_start_partitioning()
 	static const char *mbox_btn_map[] =  { "\251", "\222确定", "\251", "" };
 	static const char *mbox_btn_map1[] = { "\222SD UMS", "\222刷写Linux", "\222刷写Android", "\221好", "" };
 	static const char *mbox_btn_map2[] = { "\222SD UMS", "\222刷写Linux", "\221好", "" };
-	static const char *mbox_btn_map3[] = { "\222SD UMS", "\222F刷写Android", "\221好", "" };
+	static const char *mbox_btn_map3[] = { "\222SD UMS", "\222刷写Android", "\221好", "" };
 	lv_obj_t *mbox = lv_mbox_create(dark_bg, NULL);
 	lv_mbox_set_recolor_text(mbox, true);
 	lv_obj_set_width(mbox, LV_HOR_RES / 9 * 6);

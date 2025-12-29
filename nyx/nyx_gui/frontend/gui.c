@@ -742,7 +742,7 @@ lv_res_t nyx_generic_onoff_toggle(lv_obj_t *btn)
 	if (!label_btn2)
 	{
 		strcpy(label_text, lv_label_get_text(label_btn));
-		label_text[strlen(label_text) - 15] = 0;
+		label_text[strlen(label_text) - 19] = 0;
 
 		if (!(lv_btn_get_state(btn) & LV_BTN_STATE_TGL_REL))
 		{
