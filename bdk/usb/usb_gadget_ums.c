@@ -326,11 +326,11 @@ static void _transfer_start(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt, u32 
 
 		if (bulk_ctxt->bulk_in_status == USB_ERROR_XFER_ERROR)
 		{
-			ums->set_text(ums->label, "#FFDD00 Error:# EP IN transfer!");
+			ums->set_text(ums->label, "#FFDD00 错误：#端口IN传输错误!");
 			_flush_endpoint(bulk_ctxt->bulk_in);
 		}
 		else if (bulk_ctxt->bulk_in_status == USB2_ERROR_XFER_NOT_ALIGNED)
-			ums->set_text(ums->label, "#FFDD00 Error:# EP IN Buffer not aligned!");
+			ums->set_text(ums->label, "#FFDD00 错误：#端口IN缓冲区未对齐!");
 
 		if (sync_timeout)
 			bulk_ctxt->bulk_in_buf_state = BUF_STATE_EMPTY;
@@ -343,11 +343,11 @@ static void _transfer_start(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt, u32 
 
 		if (bulk_ctxt->bulk_out_status == USB_ERROR_XFER_ERROR)
 		{
-			ums->set_text(ums->label, "#FFDD00 Error:# EP OUT transfer!");
+			ums->set_text(ums->label, "#FFDD00 错误：#端口OUT传输错误!");
 			_flush_endpoint(bulk_ctxt->bulk_out);
 		}
 		else if (bulk_ctxt->bulk_out_status == USB2_ERROR_XFER_NOT_ALIGNED)
-			ums->set_text(ums->label, "#FFDD00 Error:# EP OUT Buffer not aligned!");
+			ums->set_text(ums->label, "#FFDD00 错误：#端口OUT缓冲区未对齐!");
 
 		if (sync_timeout)
 			bulk_ctxt->bulk_out_buf_state = BUF_STATE_FULL;
@@ -362,7 +362,7 @@ static void _transfer_out_big_read(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctx
 
 		if (bulk_ctxt->bulk_out_status == USB_ERROR_XFER_ERROR)
 		{
-			ums->set_text(ums->label, "#FFDD00 Error:# EP OUT transfer!");
+			ums->set_text(ums->label, "#FFDD00 错误：#端口OUT传输错误!");
 			_flush_endpoint(bulk_ctxt->bulk_out);
 		}
 
@@ -378,7 +378,7 @@ static void _transfer_finish(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt, u32
 
 		if (bulk_ctxt->bulk_in_status == USB_ERROR_XFER_ERROR)
 		{
-			ums->set_text(ums->label, "#FFDD00 Error:# EP IN transfer!");
+			ums->set_text(ums->label, "#FFDD00 错误：#端口IN传输错误!");
 			_flush_endpoint(bulk_ctxt->bulk_in);
 		}
 
@@ -391,7 +391,7 @@ static void _transfer_finish(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt, u32
 
 		if (bulk_ctxt->bulk_out_status == USB_ERROR_XFER_ERROR)
 		{
-			ums->set_text(ums->label, "#FFDD00 Error:# EP OUT transfer!");
+			ums->set_text(ums->label, "#FFDD00 错误：#端口OUT传输!");
 			_flush_endpoint(bulk_ctxt->bulk_out);
 		}
 
@@ -461,7 +461,7 @@ static int _scsi_read(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt)
 	}
 	if (lba_offset >= ums->lun.num_sectors)
 	{
-		ums->set_text(ums->label, "#FF8000 Warn:# Read - Out of range! Host notified.");
+		ums->set_text(ums->label, "#FF8000 警告：#读取超出范围！主机已通知。");
 		ums->lun.sense_data = SS_LOGICAL_BLOCK_ADDRESS_OUT_OF_RANGE;
 
 		return UMS_RES_INVALID_ARG;
@@ -513,7 +513,7 @@ static int _scsi_read(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt)
 		// If an error occurred, report it and its position.
 		if (!amount)
 		{
-			ums->set_text(ums->label, "#FFDD00 Error:# SDMMC Read!");
+			ums->set_text(ums->label, "#FFDD00 错误：#SDMMC读取失败！");
 			ums->lun.sense_data      = SS_UNRECOVERED_READ_ERROR;
 			ums->lun.sense_data_info = lba_offset;
 			ums->lun.info_valid      = 1;
@@ -551,7 +551,7 @@ static int _scsi_write(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt)
 
 	if (ums->lun.ro)
 	{
-		ums->set_text(ums->label, "#FF8000 Warn:# Write - Read only! Host notified.");
+		ums->set_text(ums->label, "#FF8000 警告：#写入受阻 - 只读模式! 已通知主机。");
 		ums->lun.sense_data = SS_WRITE_PROTECTED;
 
 		return UMS_RES_INVALID_ARG;
@@ -575,7 +575,7 @@ static int _scsi_write(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt)
 	// Check that starting LBA is not past the end sector offset.
 	if (lba_offset >= ums->lun.num_sectors)
 	{
-		ums->set_text(ums->label, "#FF8000 Warn:# Write - Out of range! Host notified.");
+		ums->set_text(ums->label, "#FF8000 警告：#写入超出范围! 已通知主机。");
 		ums->lun.sense_data = SS_LOGICAL_BLOCK_ADDRESS_OUT_OF_RANGE;
 
 		return UMS_RES_INVALID_ARG;
@@ -597,7 +597,7 @@ static int _scsi_write(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt)
 
 			if (usb_lba_offset >= ums->lun.num_sectors)
 			{
-				ums->set_text(ums->label, "#FFDD00 Error:# Write - Past last sector!");
+				ums->set_text(ums->label, "#FFDD00 错误:# 写入超过最后一个扇区!");
 				ums->lun.sense_data      = SS_LOGICAL_BLOCK_ADDRESS_OUT_OF_RANGE;
 				ums->lun.sense_data_info = usb_lba_offset;
 				ums->lun.info_valid      = 1;
@@ -625,7 +625,7 @@ static int _scsi_write(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt)
 				ums->lun.sense_data_info = lba_offset;
 				ums->lun.info_valid      = 1;
 
-				s_printf(txt_buf, "#FFDD00 Error:# Write - Comm failure %d!", bulk_ctxt->bulk_out_status);
+				s_printf(txt_buf, "#FFDD00 错误：#写入通信失败 %d！", bulk_ctxt->bulk_out_status);
 				ums->set_text(ums->label, txt_buf);
 				break;
 			}
@@ -663,7 +663,7 @@ DPRINTF("file write %X @ %X\n", amount, lba_offset);
 			// If an error occurred, report it and its position.
 			if (!amount)
 			{
-				ums->set_text(ums->label, "#FFDD00 Error:# SDMMC Write!");
+				ums->set_text(ums->label, "#FFDD00 错误：#SDMMC写入失败！");
 				ums->lun.sense_data      = SS_WRITE_ERROR;
 				ums->lun.sense_data_info = lba_offset;
 				ums->lun.info_valid      = 1;
@@ -674,7 +674,7 @@ DPRINTF("file write %X @ %X\n", amount, lba_offset);
 			// Did the host decide to stop early?
 			if (bulk_ctxt->bulk_out_length_actual < bulk_ctxt->bulk_out_length)
 			{
-				ums->set_text(ums->label, "#FFDD00 Error:# Empty Write!");
+				ums->set_text(ums->label, "#FFDD00 错误：#空写入！");
 				ums->short_packet_received = 1;
 				break;
 			}
@@ -690,7 +690,7 @@ static int _scsi_verify(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt)
 	u32 lba_offset = get_array_be_to_le32(&ums->cmnd[2]);
 	if (lba_offset >= ums->lun.num_sectors)
 	{
-		ums->set_text(ums->label, "#FF8000 Warn:# Verif - Out of range! Host notified.");
+		ums->set_text(ums->label, "#FF8000 警告：#验证超出范围! 已通知主机。");
 		ums->lun.sense_data = SS_LOGICAL_BLOCK_ADDRESS_OUT_OF_RANGE;
 
 		return UMS_RES_INVALID_ARG;
@@ -729,7 +729,7 @@ DPRINTF("File read %X @ %X\n", amount, lba_offset);
 
 		if (!amount)
 		{
-			ums->set_text(ums->label, "#FFDD00 Error:# File verify!");
+			ums->set_text(ums->label, "#FFDD00 错误：#文件验证失败！");
 			ums->lun.sense_data      = SS_UNRECOVERED_READ_ERROR;
 			ums->lun.sense_data_info = lba_offset;
 			ums->lun.info_valid      = 1;
@@ -1058,7 +1058,7 @@ static int _scsi_start_stop(usbd_gadget_ums_t *ums)
 	// Check if we are allowed to unload the media.
 	if (ums->lun.prevent_medium_removal)
 	{
-		ums->set_text(ums->label, "#C7EA46 Status:# Unload attempt prevented");
+		ums->set_text(ums->label, "#C7EA46 状态：#尝试卸载被阻止");
 		ums->lun.sense_data = SS_MEDIUM_REMOVAL_PREVENTED;
 
 		return UMS_RES_INVALID_ARG;
@@ -1466,7 +1466,7 @@ static int _finish_reply(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt)
 		{
 			_set_ep_stall(bulk_ctxt->bulk_out);
 			rc = _set_ep_stall(bulk_ctxt->bulk_in);
-			ums->set_text(ums->label, "#FFDD00 Error:# Direction unknown. Stalled both EP!");
+			ums->set_text(ums->label, "#FFDD00 错误：#方向未知。已停止两个端口！");
 		} // Else do nothing.
 		break;
 
@@ -1487,7 +1487,7 @@ static int _finish_reply(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt)
 			{
 				_transfer_start(ums, bulk_ctxt, bulk_ctxt->bulk_in, USB_XFER_SYNCED_DATA);
 				rc = _set_ep_stall(bulk_ctxt->bulk_in);
-				ums->set_text(ums->label, "#FFDD00 Error:# Residue. Stalled EP IN!");
+				ums->set_text(ums->label, "#FFDD00 错误：#残留。已停止端口IN！");
 			}
 			else
 				rc = _pad_with_zeros(ums, bulk_ctxt);
@@ -1560,7 +1560,7 @@ static int _received_cbw(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt)
 				{
 					if (usb_ops.usb_device_get_port_in_sleep())
 					{
-						ums->set_text(ums->label, "#C7EA46 Status:# EP in sleep");
+						ums->set_text(ums->label, "#C7EA46 状态:#端口休眠中");
 						ums->timeouts += 14;
 					}
 					else if (!ums->xusb) // Timeout only on USB2.
@@ -1579,7 +1579,7 @@ static int _received_cbw(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt)
 
 			if (ums->lun.unmounted)
 			{
-				ums->set_text(ums->label, "#C7EA46 Status:# Medium unmounted");
+				ums->set_text(ums->label, "#C7EA46 状态:# 介质已卸载");
 				ums->timeouts++;
 				if (!bulk_ctxt->bulk_out_status)
 					ums->timeouts += 3;
@@ -1631,7 +1631,7 @@ static int _received_cbw(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt)
 		{
 			_set_ep_stall(bulk_ctxt->bulk_out);
 			_set_ep_stall(bulk_ctxt->bulk_in);
-			ums->set_text(ums->label, "#FFDD00 Error:# CBW unknown - Stalled both EP!");
+			ums->set_text(ums->label, "#FFDD00 错误：#CBW未知 - 已停止两个端口！");
 		}
 
 		return UMS_RES_INVALID_ARG;
@@ -1710,7 +1710,7 @@ static void _send_status(usbd_gadget_ums_t *ums, bulk_ctxt_t *bulk_ctxt)
 
 	if (ums->phase_error)
 	{
-		ums->set_text(ums->label, "#FFDD00 Error:# Phase-error!");
+		ums->set_text(ums->label, "#FFDD00 错误:# 阶段性错误!");
 		status = USB_STATUS_PHASE_ERROR;
 		sd = SS_INVALID_COMMAND;
 	}
@@ -1824,7 +1824,7 @@ int usb_device_gadget_ums(usb_ctxt_t *usbs)
 		xusb_device_get_ops(&usb_ops);
 	}
 
-	usbs->set_text(usbs->label, "#C7EA46 Status:# Started USB");
+	usbs->set_text(usbs->label, "#C7EA46 状态：#已启动USB");
 
 	if (usb_ops.usb_device_init())
 	{
@@ -1855,7 +1855,7 @@ int usb_device_gadget_ums(usb_ctxt_t *usbs)
 	ums.set_text = usbs->set_text;
 	ums.system_maintenance = usbs->system_maintenance;
 
-	ums.set_text(ums.label, "#C7EA46 Status:# Mounting disk");
+	ums.set_text(ums.label, "#C7EA46 状态：#挂载磁盘");
 
 	// Initialize sdmmc.
 	if (usbs->type == MMC_SD)
@@ -1863,7 +1863,7 @@ int usb_device_gadget_ums(usb_ctxt_t *usbs)
 		sd_end();
 		if (!sd_mount())
 		{
-			ums.set_text(ums.label, "#FFDD00 Failed to init SD!#");
+			ums.set_text(ums.label, "#FFDD00 初始化SD卡失败！#");
 			res = 1;
 			goto init_fail;
 		}
@@ -1876,7 +1876,7 @@ int usb_device_gadget_ums(usb_ctxt_t *usbs)
 	{
 		if (!emmc_initialize(false))
 		{
-			ums.set_text(ums.label, "#FFDD00 Failed to init eMMC!#");
+			ums.set_text(ums.label, "#FFDD00 初始化eMMC失败！#");
 			res = 1;
 			goto init_fail;
 		}
@@ -1886,18 +1886,18 @@ int usb_device_gadget_ums(usb_ctxt_t *usbs)
 		ums.lun.storage = &emmc_storage;
 	}
 
-	ums.set_text(ums.label, "#C7EA46 Status:# Waiting for connection");
+	ums.set_text(ums.label, "#C7EA46 状态：#正在等待连接");
 
 	// Initialize Control Endpoint.
 	if (usb_ops.usb_device_enumerate(USB_GADGET_UMS))
 		goto usb_enum_error;
 
-	ums.set_text(ums.label, "#C7EA46 Status:# Waiting for LUN");
+	ums.set_text(ums.label, "#C7EA46 状态：#正在等待LUN");
 
 	if (usb_ops.usb_device_class_send_max_lun(0)) // One device for now.
 		goto usb_enum_error;
 
-	ums.set_text(ums.label, "#C7EA46 Status:# Started UMS");
+	ums.set_text(ums.label, "#C7EA46 状态：#已启动UMS");
 
 	// If partition sectors are not set get them from hardware.
 	if (!ums.lun.num_sectors)
@@ -1918,7 +1918,7 @@ int usb_device_gadget_ums(usb_ctxt_t *usbs)
 		{
 			// Check if we are allowed to unload the media.
 			if (ums.lun.prevent_medium_removal)
-				ums.set_text(ums.label, "#C7EA46 Status:# Unload attempt prevented");
+				ums.set_text(ums.label, "#C7EA46 状态：#尝试卸载被阻止");
 			else
 				break;
 		}
@@ -1950,13 +1950,13 @@ int usb_device_gadget_ums(usb_ctxt_t *usbs)
 	} while (ums.state != UMS_STATE_TERMINATED);
 
 	if (ums.lun.prevent_medium_removal)
-		ums.set_text(ums.label, "#FFDD00 Error:# Disk unsafely ejected");
+		ums.set_text(ums.label, "#FFDD00 错误：#磁盘不安全弹出");
 	else
-		ums.set_text(ums.label, "#C7EA46 Status:# Disk ejected");
+		ums.set_text(ums.label, "#C7EA46 状态：#磁盘已弹出");
 	goto exit;
 
 usb_enum_error:
-	ums.set_text(ums.label, "#FFDD00 Error:# Timed out or canceled!");
+	ums.set_text(ums.label, "#FFDD00 错误：#超时或取消！");
 	res = 1;
 
 exit:

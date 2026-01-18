@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  issue_comment:
+    types: [ created ]
+
+jobs:
+  build_and_release:
+    name: Build and release
+    runs-on: ubuntu-latest
+    container: devkitpro/devkita64:latest
+    if: contains(github.event.comment.body, '/release-action')
+
+    steps:
+      - name: Checkout latest code
+        uses: actions/checkout@v5
+        with:
+          ref: master
+          clean: true
+          fetch-depth: 0
+          fetch-tags: true
+          submodules: recursive
+      - name: Setup ENV parameters
+        run: |
+          VER_FILE=Versions.inc
+          VERSION_HEKATE=$(awk '/^BLVERSION_MAJOR/{print $3}' $VER_FILE).$(awk '/^BLVERSION_MINOR/{print $3}' $VER_FILE).$(awk '/^BLVERSION_HOTFX/{print $3}' $VER_FILE)
+          VERSION_NYX=$(awk '/^NYXVERSION_MAJOR/{print $3}' $VER_FILE).$(awk '/^NYXVERSION_MINOR/{print $3}' $VER_FILE).$(awk '/^NYXVERSION_HOTFX/{print $3}' $VER_FILE)
+          echo "TAG=v${VERSION_HEKATE}-CN" > "${GITHUB_ENV}"
+          echo "RELEASE_NAME=hekate v${VERSION_HEKATE} & Nyx v${VERSION_NYX} CN" >> "${GITHUB_ENV}"
+        shell: bash
+      - name: Build
+        run: |
+          export DEVKITPRO=/opt/devkitpro
+          git config --global --add safe.directory "*"
+          make -j$(nproc)
+        shell: bash
+      - name: Upload Release Asset
+        uses: softprops/action-gh-release@v2.5.0
+        with:
+          name: ${{ env.RELEASE_NAME }}
+          tag_name: ${{ env.TAG }}
+          draft: false
+          prerelease: false
+          generate_release_notes: yes
+          make_latest: true
+          files: |
+            ./output/nyx.bin
