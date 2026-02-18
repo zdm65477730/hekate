@@ -758,7 +758,7 @@ lv_res_t nyx_generic_onoff_toggle(lv_obj_t *btn)
 
 		if (!(lv_btn_get_state(btn) & LV_BTN_STATE_TGL_REL))
 		{
-			strcat(label_text, "#D0D0D0    关闭#");
+			strcat(label_text, "#D0D0D0    关闭 #");
 			lv_label_set_text(label_btn, label_text);
 		}
 		else
@@ -770,7 +770,7 @@ lv_res_t nyx_generic_onoff_toggle(lv_obj_t *btn)
 	else
 	{
 		if (!(lv_btn_get_state(btn) & LV_BTN_STATE_TGL_REL))
-			lv_label_set_text(label_btn, "#D0D0D0 关闭#");
+			lv_label_set_text(label_btn, "#D0D0D0 关闭 #");
 		else
 		{
 			s_printf(label_text, "%s%s", text_color, " 开启 #");
@@ -1259,7 +1259,7 @@ void nyx_create_onoff_button(lv_theme_t *th, lv_obj_t *parent, lv_obj_t *btn, co
 
 	lv_label_set_text(label_btn, btn_name);
 
-	lv_label_set_text(label_btnsw, "#D0D0D0 关闭#");
+	lv_label_set_text(label_btnsw, "#D0D0D0 关闭 #");
 	lv_obj_align(label_btn, btn, LV_ALIGN_IN_LEFT_MID, LV_DPI / 4, 0);
 	lv_obj_align(label_btnsw, btn, LV_ALIGN_IN_RIGHT_MID, -LV_DPI / 4, -LV_DPI / 10);
 
@@ -1614,7 +1614,7 @@ static lv_res_t logs_onoff_toggle(lv_obj_t *btn)
 
 	char label_text[64];
 	strcpy(label_text, lv_label_get_text(label_btn));
-	label_text[strlen(label_text) - 12] = 0;
+	label_text[strlen(label_text) - 15] = 0;
 
 	if (!launch_logs_enable)
 	{
@@ -1623,7 +1623,7 @@ static lv_res_t logs_onoff_toggle(lv_obj_t *btn)
 	}
 	else
 	{
-		s_printf(label_text, "%s%s%s", label_text, text_color, " 开启 #");
+		s_printf(label_text, "%s%s%s", label_text, text_color, " 开启#");
 		lv_label_set_text(label_btn, label_text);
 	}
 
@@ -1723,7 +1723,7 @@ static lv_res_t _create_window_home_launch(lv_obj_t *btn)
 	else
 		win = create_window_launch(SYMBOL_GPS" 更多配置");
 
-	lv_win_add_btn(win, NULL, SYMBOL_LIST" 日志 #D0D0D0 OFF#", logs_onoff_toggle);
+	lv_win_add_btn(win, NULL, SYMBOL_LIST" 日志 #D0D0D0 关闭#", logs_onoff_toggle);
 	launch_logs_enable = false;
 
 	lv_cont_set_fit(lv_page_get_scrl(lv_win_get_content(win)), false, false);
