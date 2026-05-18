@@ -2767,28 +2767,33 @@ static lv_res_t _create_window_battery_status(lv_obj_t *btn)
 	value = i2c_recv_byte(I2C_5, MAX77620_I2C_ADDR, MAX77620_REG_CID4);
 	u32 main_pmic_version = i2c_recv_byte(I2C_5, MAX77620_I2C_ADDR, MAX77620_REG_CID3) & 0xF;
 
+	s_printf(txt_buf + strlen(txt_buf), "max77620 v%d%s\n",
+		main_pmic_version, main_pmic_version == 11 ? "" : "#FF8000 "SYMBOL_WARNING"#");
 	if (value == 0x35)
-		s_printf(txt_buf + strlen(txt_buf), "max77620 v%d\nErista OTP\n", main_pmic_version);
+		strcat(txt_buf, "Erista OTP\n");
 	else if (value == 0x53)
-		s_printf(txt_buf + strlen(txt_buf), "max77620 v%d\nMariko OTP\n", main_pmic_version);
+		strcat(txt_buf, "Mariko OTP\n");
 	else
-		s_printf(txt_buf + strlen(txt_buf), "max77620 v%d\n#FF8000 Unknown OTP# (%02X)\n", main_pmic_version, value);
+		s_printf(txt_buf + strlen(txt_buf), "#FF8000 Unknown OTP# (%02X)\n", value);
 
 	// CPU/GPU/DRAM Pmic IC info.
 	u32 cpu_gpu_pmic_type = h_cfg.t210b01 ? (FUSE(FUSE_RESERVED_ODM28_B01) & 1) + 1 : 0;
+	u8 version;
 	switch (cpu_gpu_pmic_type)
 	{
 	case 0:
-		s_printf(txt_buf + strlen(txt_buf), "max77621 v%d",
-			i2c_recv_byte(I2C_5, MAX77621_CPU_I2C_ADDR, MAX77621_REG_CHIPID1));
+		version = i2c_recv_byte(I2C_5, MAX77621_CPU_I2C_ADDR, MAX77621_REG_CHIPID1);
+		s_printf(txt_buf + strlen(txt_buf), "max77621 v%d%s",
+			version , version == 18 ? "" : "#FF8000 "SYMBOL_WARNING"#");
 		break;
 	case 1:
-		s_printf(txt_buf + strlen(txt_buf), "max77812-2 v%d",   // High power GPU. 2 Outputs, phases 3 1.
+		s_printf(txt_buf + strlen(txt_buf), "max77812-2 v%d",    // High power GPU. 2 Outputs, phases 3 1.
 			i2c_recv_byte(I2C_5, MAX77812_PHASE31_CPU_I2C_ADDR, MAX77812_REG_VERSION) & 7);
 		break;
 	case 2:
-		s_printf(txt_buf + strlen(txt_buf), "max77812-3 v%d.0", // Low  power GPU. 3 Outputs, phases 2 1 1.
-			i2c_recv_byte(I2C_5, MAX77812_PHASE211_CPU_I2C_ADDR, MAX77812_REG_VERSION) & 7);
+		version = i2c_recv_byte(I2C_5, MAX77812_PHASE211_CPU_I2C_ADDR, MAX77812_REG_VERSION) & 7;
+		s_printf(txt_buf + strlen(txt_buf), "max77812-3 v%d%s", // Low  power GPU. 3 Outputs, phases 2 1 1.
+			version, version == 5 ? "" : "#FF8000 "SYMBOL_WARNING"#");
 		break;
 	}
 
