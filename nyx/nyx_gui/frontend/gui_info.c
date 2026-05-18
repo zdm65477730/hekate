@@ -413,7 +413,7 @@ hw_info_t *hw_info = NULL;
 
 //! TODO: Limits assumed based on known samples.
 #define WAFER_20NM_X_MIN  -9
-#define WAFER_20NM_X_MAX  15
+#define WAFER_20NM_X_MAX  16
 #define WAFER_20NM_Y_MIN   1
 #define WAFER_20NM_Y_MAX  24
 
