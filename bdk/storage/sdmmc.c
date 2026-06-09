@@ -898,23 +898,23 @@ void _sd_storage_debug_print_csd(const u32 *raw_csd)
 
 void _sd_storage_debug_print_scr(const u32 *raw_scr)
 {
-	u32 resp[4];
-	memcpy(&resp[2], raw_scr, 8);
+	u32 scr[4];
+	memcpy(&scr[2], raw_scr, 8);
 
 	gfx_printf("\n");
 
-	gfx_printf("SCR_STRUCTURE:         %X\n",   unstuff_bits(resp, 60, 4));
-	gfx_printf("SD_SPEC:               %X\n",   unstuff_bits(resp, 56, 4));
-	gfx_printf("DATA_STAT_AFTER_ERASE: %X\n",   unstuff_bits(resp, 55, 1));
-	gfx_printf("SD_SECURITY:           %X\n",   unstuff_bits(resp, 52, 3));
-	gfx_printf("SD_BUS widths:         %X\n",   unstuff_bits(resp, 48, 4));
-	gfx_printf("SD_SPEC3:              %X\n",   unstuff_bits(resp, 47, 1));
-	gfx_printf("EX_SECURITY:           %X\n",   unstuff_bits(resp, 43, 4));
-	gfx_printf("SD_SPEC4:              %X\n",   unstuff_bits(resp, 42, 1));
-	gfx_printf("SD_SPECX:              %X\n",   unstuff_bits(resp, 38, 4));
-	gfx_printf("CMD_SUPPORT:           %X\n",   unstuff_bits(resp, 32, 4));
-	gfx_printf("VENDOR:                %08X\n", unstuff_bits(resp, 0, 32));
-	gfx_printf("--RSVD--               %X\n",   unstuff_bits(resp, 36, 2));
+	gfx_printf("SCR_STRUCTURE:         %X\n",   unstuff_bits(scr, 60, 4));
+	gfx_printf("SD_SPEC:               %X\n",   unstuff_bits(scr, 56, 4));
+	gfx_printf("DATA_STAT_AFTER_ERASE: %X\n",   unstuff_bits(scr, 55, 1));
+	gfx_printf("SD_SECURITY:           %X\n",   unstuff_bits(scr, 52, 3));
+	gfx_printf("SD_BUS widths:         %X\n",   unstuff_bits(scr, 48, 4));
+	gfx_printf("SD_SPEC3:              %X\n",   unstuff_bits(scr, 47, 1));
+	gfx_printf("EX_SECURITY:           %X\n",   unstuff_bits(scr, 43, 4));
+	gfx_printf("SD_SPEC4:              %X\n",   unstuff_bits(scr, 42, 1));
+	gfx_printf("SD_SPECX:              %X\n",   unstuff_bits(scr, 38, 4));
+	gfx_printf("CMD_SUPPORT:           %X\n",   unstuff_bits(scr, 32, 4));
+	gfx_printf("VENDOR:                %08X\n", unstuff_bits(scr, 0, 32));
+	gfx_printf("--RSVD--               %X\n",   unstuff_bits(scr, 36, 2));
 }
 
 void _sd_storage_debug_print_ssr(const u8 *raw_ssr)
@@ -969,75 +969,90 @@ void _sd_storage_debug_print_ssr(const u8 *raw_ssr)
 }
 #endif
 
-static int _sd_storage_send_if_cond(sdmmc_storage_t *storage, bool *is_sdsc)
+static int _sd_storage_send_if_cond(sdmmc_storage_t *storage, bool *is_sd_v1)
 {
 	sdmmc_cmd_t cmdbuf;
-	u16 vhd_pattern = SD_VHS_27_36 | 0xAA;
-	sdmmc_init_cmd(&cmdbuf, SD_SEND_IF_COND, vhd_pattern, SDMMC_RSP_TYPE_7, 0);
+	u16 icr = SD_ICR_VHS_27_36 | SD_ICR_PATTERN;
+	sdmmc_init_cmd(&cmdbuf, SD_SEND_IF_COND, icr, SDMMC_RSP_TYPE_7, 0);
+
 	if (sdmmc_execute_cmd(storage->sdmmc, &cmdbuf, NULL, NULL))
 	{
-		// The SD Card is version 1.X (SDSC) if there is no response.
+		// The SD Card is version 1.XX if there is no response.
 		if (storage->sdmmc->error_sts == SDHCI_ERR_INT_CMD_TIMEOUT)
 		{
-			*is_sdsc = 1;
+			*is_sd_v1 = true;
+
 			return 0;
 		}
 
 		return 1;
 	}
 
-	// For Card version >= 2.0, parse results.
-	u32 resp = 0;
-	sdmmc_get_cached_rsp(storage->sdmmc, &resp, SDMMC_RSP_TYPE_7);
+	// For version >= 2.0, parse results.
+	u32 ricr = 0;
+	sdmmc_get_cached_rsp(storage->sdmmc, &ricr, SDMMC_RSP_TYPE_7);
 
-	// Check if VHD was accepted and pattern was properly returned.
-	if ((resp & 0xFFF) == vhd_pattern)
+#ifdef SDMMC_DEBUG_PRINT_SD_REGS
+	gfx_printf("ICR:                   %08X -> %08X\n", icr, ricr);
+#endif
+
+	// Check if VHS was accepted and pattern was properly returned.
+	if ((ricr & 0xFFF) == (icr & 0xFFF))
 		return 0;
 
 	return 1;
 }
 
-static int _sd_storage_get_op_cond_once(sdmmc_storage_t *storage, u32 *cond, bool is_sdsc, int bus_uhs_support)
+static int _sd_storage_send_op_cond(sdmmc_storage_t *storage, u32 *rocr, u32 ocr, bool is_sd_v1)
 {
 	sdmmc_cmd_t cmdbuf;
-	// Support for Current > 150mA.
-	u32 arg = !is_sdsc ? SD_OCR_XPC : 0;
-	// Support for handling block-addressed SDHC cards.
-	arg	|= !is_sdsc ? SD_OCR_CCS : 0;
-	// Support for 1.8V signaling.
-	arg |= (bus_uhs_support && !is_sdsc) ? SD_OCR_S18R : 0;
-	// Support for 3.3V power supply (VDD1).
-	arg |= SD_OCR_VDD_32_33;
 
-	sdmmc_init_cmd(&cmdbuf, SD_APP_OP_COND, arg, SDMMC_RSP_TYPE_3, 0);
+	sdmmc_init_cmd(&cmdbuf, SD_APP_OP_COND, ocr, SDMMC_RSP_TYPE_3, 0);
 
-	if (_sd_storage_execute_app_cmd(storage, R1_SKIP_STATE_CHECK, is_sdsc ? R1_ILLEGAL_COMMAND : 0, &cmdbuf, NULL, NULL))
+	if (_sd_storage_execute_app_cmd(storage, R1_SKIP_STATE_CHECK, is_sd_v1 ? R1_ILLEGAL_COMMAND : 0, &cmdbuf, NULL, NULL))
 		return 1;
 
-	return sdmmc_get_cached_rsp(storage->sdmmc, cond, SDMMC_RSP_TYPE_3);
+	return sdmmc_get_cached_rsp(storage->sdmmc, rocr, SDMMC_RSP_TYPE_3);
 }
 
-static int _sd_storage_get_op_cond(sdmmc_storage_t *storage, bool is_sdsc, int bus_uhs_support)
+static int _sd_storage_get_op_cond(sdmmc_storage_t *storage, bool is_sd_v1, int lv_support)
 {
 	u32 timeout = get_tmr_ms() + 1500;
 
+	// Host in 3.3V power supply (VDD1).
+	u32 ocr = SD_OCR_VDD_32_33;
+
+	if (!is_sd_v1)
+	{
+		// Support for Current > 150mA.
+		ocr |= SD_OCR_XPC;
+		// Support for handling block-addressed SDHC/SDXC/SDUC cards.
+		ocr	|= SD_OCR_HCS;
+		// Support and request 1.8V signaling.
+		ocr |= lv_support ? SD_OCR_S18R : 0;
+	}
+
 	while (true)
 	{
-		u32 cond = 0;
-		if (_sd_storage_get_op_cond_once(storage, &cond, is_sdsc, bus_uhs_support))
+		u32 rocr = 0;
+		if (_sd_storage_send_op_cond(storage, &rocr, ocr, is_sd_v1))
 			break;
 
 		// Check if power up is done.
-		if (cond & SD_OCR_BUSY)
+		if (rocr & SD_OCR_BUSY)
 		{
-			DPRINTF("[SD] op cond: %08X, lv: %d\n", cond, bus_uhs_support);
+#ifdef SDMMC_DEBUG_PRINT_SD_REGS
+			gfx_printf("ROCR:                  %08X (%d)\n", rocr, lv_support);
+#else
+			DPRINTF("[SD] rocr: %08X, lv: %d\n", rocr, lv_support);
+#endif
 
-			// Check if card is high capacity.
-			if (cond & SD_OCR_CCS)
-				storage->has_sector_access = 1;
+			// Check if card is higher capacity.
+			if (rocr & SD_OCR_CCS)
+				storage->has_sector_access = 1; // Non-SDUC.
 
-			// Check if card supports 1.8V signaling.
-			if (cond & SD_ROCR_S18A && bus_uhs_support && !storage->is_low_voltage)
+			// Check if card accepted 1.8V signaling.
+			if (rocr & SD_OCR_S18A && lv_support)
 			{
 				// Switch to 1.8V signaling.
 				if (!_sdmmc_storage_execute_cmd_type1(storage, SD_SWITCH_VOLTAGE, 0, 0, R1_STATE_READY))
@@ -1080,13 +1095,13 @@ static int _sd_storage_get_rca(sdmmc_storage_t *storage)
 		if (sdmmc_execute_cmd(storage->sdmmc, &cmdbuf, NULL, NULL))
 			break;
 
-		u32 resp = 0;
-		if (sdmmc_get_cached_rsp(storage->sdmmc, &resp, SDMMC_RSP_TYPE_6))
+		u32 rca = 0;
+		if (sdmmc_get_cached_rsp(storage->sdmmc, &rca, SDMMC_RSP_TYPE_6))
 			break;
 
-		if (resp >> 16)
+		if (rca >> 16)
 		{
-			storage->rca = resp >> 16;
+			storage->rca = rca >> 16;
 			return 0;
 		}
 
@@ -1101,27 +1116,27 @@ static int _sd_storage_get_rca(sdmmc_storage_t *storage)
 static void _sd_storage_parse_scr(sdmmc_storage_t *storage)
 {
 	// unstuff_bits can parse only 4 u32
-	u32 resp[4];
+	u32 scr[4];
 
-	memcpy(&resp[2], storage->raw_scr, 8);
+	memcpy(&scr[2], storage->raw_scr, 8);
 
 #ifdef SDMMC_DEBUG_PRINT_SD_REGS
 	_sd_storage_debug_print_scr((u32 *)storage->raw_scr);
 #endif
 
-	storage->scr.sda_vsn = unstuff_bits(resp, 56, 4);
-	storage->scr.bus_widths = unstuff_bits(resp, 48, 4);
+	storage->scr.sda_vsn = unstuff_bits(scr, 56, 4);
+	storage->scr.bus_widths = unstuff_bits(scr, 48, 4);
 
 	// If v2.0 is supported, check if Physical Layer Spec v3.0 is supported.
 	if (storage->scr.sda_vsn == SCR_SPEC_VER_2)
-		storage->scr.sda_spec3 = unstuff_bits(resp, 47, 1);
+		storage->scr.sda_spec3 = unstuff_bits(scr, 47, 1);
 	if (storage->scr.sda_spec3)
 	{
-		u8 sda_spec4 = unstuff_bits(resp, 42, 1);
+		u8 sda_spec4 = unstuff_bits(scr, 42, 1);
 		if (sda_spec4)
-			storage->scr.cmds = unstuff_bits(resp, 32, 4);
+			storage->scr.cmds = unstuff_bits(scr, 32, 4);
 		else
-			storage->scr.cmds = unstuff_bits(resp, 32, 2);
+			storage->scr.cmds = unstuff_bits(scr, 32, 2);
 	}
 }
 
@@ -1158,7 +1173,7 @@ int sd_storage_get_scr(sdmmc_storage_t *storage)
 	return _sdmmc_storage_check_card_status(tmp);
 }
 
-static int _sd_storage_switch_get(sdmmc_storage_t *storage, void *buf)
+static int _sd_storage_switch_get_all(sdmmc_storage_t *storage, void *buf)
 {
 	sdmmc_cmd_t cmdbuf;
 	sdmmc_init_cmd(&cmdbuf, SD_SWITCH, 0xFFFFFF, SDMMC_RSP_TYPE_1, 0);
@@ -1378,8 +1393,18 @@ int sd_storage_get_fmodes(sdmmc_storage_t *storage, u8 *buf, sd_func_modes_t *fm
 	if (!buf)
 		buf = (u8 *)SDMMC_ALT_DMA_BUFFER;
 
-	if (_sd_storage_switch_get(storage, buf))
+	if (_sd_storage_switch_get_all(storage, buf))
 		return 1;
+
+#ifdef SDMMC_DEBUG_PRINT_SD_REGS
+	gfx_printf("\nFMD:       %04X %04X %04X %04X %04X %04X\n",
+		buf[13] | (buf[12] << 8),
+		buf[11] | (buf[10] << 8),
+		buf[9]  | (buf[8]  << 8),
+		buf[7]  | (buf[6]  << 8),
+		buf[5]  | (buf[4]  << 8),
+		buf[3]  | (buf[2]  << 8));
+#endif
 
 	fmodes->access_mode     = buf[13] | (buf[12] << 8);
 	fmodes->cmd_system      = buf[11] | (buf[10] << 8);
@@ -1389,7 +1414,7 @@ int sd_storage_get_fmodes(sdmmc_storage_t *storage, u8 *buf, sd_func_modes_t *fm
 	return 0;
 }
 
-static int _sd_storage_enable_uhs_low_volt(sdmmc_storage_t *storage, u32 type)
+static int _sd_storage_set_uhs_bus_speed(sdmmc_storage_t *storage, u32 type)
 {
 	sd_func_modes_t fmodes;
 	u8 *buf = storage->raw_ext_csd;
@@ -1497,7 +1522,7 @@ static int _sd_storage_enable_uhs_low_volt(sdmmc_storage_t *storage, u32 type)
 	return _sdmmc_storage_check_status(storage);
 }
 
-static int _sd_storage_enable_hs_high_volt(sdmmc_storage_t *storage)
+static int _sd_storage_set_hs25_bus_speed(sdmmc_storage_t *storage)
 {
 	sd_func_modes_t fmodes;
 	u8 *buf = storage->raw_ext_csd;
@@ -1806,9 +1831,9 @@ void sdmmc_storage_init_wait_sd()
 
 int sdmmc_storage_init_sd(sdmmc_storage_t *storage, sdmmc_t *sdmmc, u32 bus_width, u32 type)
 {
-	u32  tmp = 0;
-	bool is_sdsc = 0;
-	bool bus_uhs_support = _sdmmc_storage_get_bus_uhs_support(bus_width, type);
+	u32  tmp        = 0;
+	bool is_sd_v1   = false;
+	bool lv_support = _sdmmc_storage_get_bus_uhs_support(bus_width, type);
 
 	DPRINTF("[SD]-[init: bus: %d, type: %d]\n", bus_width, type);
 
@@ -1829,11 +1854,11 @@ int sdmmc_storage_init_sd(sdmmc_storage_t *storage, sdmmc_t *sdmmc, u32 bus_widt
 		return 1;
 	DPRINTF("[SD] went to idle state\n");
 
-	if (_sd_storage_send_if_cond(storage, &is_sdsc))
+	if (_sd_storage_send_if_cond(storage, &is_sd_v1))
 		return 1;
-	DPRINTF("[SD] after send if cond\n");
+	DPRINTF("[SD] sent if cond\n");
 
-	if (_sd_storage_get_op_cond(storage, is_sdsc, bus_uhs_support))
+	if (_sd_storage_get_op_cond(storage, is_sd_v1, lv_support))
 		return 1;
 	DPRINTF("[SD] got op cond\n");
 
@@ -1855,7 +1880,7 @@ int sdmmc_storage_init_sd(sdmmc_storage_t *storage, sdmmc_t *sdmmc, u32 bus_widt
 	{
 		if (sdmmc_setup_clock(storage->sdmmc, SDHCI_TIMING_SD_DS12))
 			return 1;
-		DPRINTF("[SD] after setup default clock\n");
+		DPRINTF("[SD] after setup default hs clock\n");
 	}
 
 	if (_sdmmc_storage_select_card(storage))
@@ -1892,13 +1917,13 @@ int sdmmc_storage_init_sd(sdmmc_storage_t *storage, sdmmc_t *sdmmc, u32 bus_widt
 
 	if (storage->is_low_voltage)
 	{
-		if (_sd_storage_enable_uhs_low_volt(storage, type))
+		if (_sd_storage_set_uhs_bus_speed(storage, type))
 			return 1;
 		DPRINTF("[SD] enabled UHS\n");
 	}
-	else if (type != SDHCI_TIMING_SD_DS12 && storage->scr.sda_vsn) // Not default speed and not SD Version 1.0.
+	else if (type != SDHCI_TIMING_SD_DS12 && storage->scr.sda_vsn) // Not default HS speed and not SD Version 1.0.
 	{
-		if (_sd_storage_enable_hs_high_volt(storage))
+		if (_sd_storage_set_hs25_bus_speed(storage))
 			return 1;
 
 		DPRINTF("[SD] enabled HS\n");
