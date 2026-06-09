@@ -972,7 +972,7 @@ void _sd_storage_debug_print_ssr(const u8 *raw_ssr)
 static int _sd_storage_send_if_cond(sdmmc_storage_t *storage, bool *is_sd_v1)
 {
 	sdmmc_cmd_t cmdbuf;
-	u16 icr = SD_ICR_VHS_27_36 | SD_ICR_PATTERN;
+	u16 icr = SD_ICR_PCIE | SD_ICR_VHS_27_36 | SD_ICR_PATTERN;
 	sdmmc_init_cmd(&cmdbuf, SD_SEND_IF_COND, icr, SDMMC_RSP_TYPE_7, 0);
 
 	if (sdmmc_execute_cmd(storage->sdmmc, &cmdbuf, NULL, NULL))
@@ -998,7 +998,11 @@ static int _sd_storage_send_if_cond(sdmmc_storage_t *storage, bool *is_sd_v1)
 
 	// Check if VHS was accepted and pattern was properly returned.
 	if ((ricr & 0xFFF) == (icr & 0xFFF))
+	{
+		storage->has_pcie = ricr & SD_ICR_PCIE;
+
 		return 0;
+	}
 
 	return 1;
 }

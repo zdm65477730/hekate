@@ -196,6 +196,7 @@ typedef struct _sdmmc_storage_t
 	int initialized;
 	int is_low_voltage;
 	int has_sector_access;
+	int has_pcie;
 	u32 rca;
 	u32 sec_cnt;
 	u32 partition;
