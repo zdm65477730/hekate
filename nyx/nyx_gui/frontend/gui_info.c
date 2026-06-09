@@ -2301,7 +2301,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 	}
 
 	lv_label_set_text(lb_desc,
-		"#00DDFF Card ID:#\n"
+		"#00DDFF Card ID#\n"
 		"Vendor ID:\n"
 		"Model:\n"
 		"OEM ID:\n"
@@ -2319,8 +2319,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 	lv_obj_t * lb_val = lv_label_create(val, lb_desc);
 
 	char *txt_buf = (char *)malloc(SZ_16K);
-	txt_buf[0] = '\n';
-	txt_buf[1] = 0;
+	s_printf(txt_buf, "#00DDFF SD v%d.00#\n", sd_storage_get_scr_sda_ver(&sd_storage));
 
 	// Identify manufacturer.
 	switch (sd_storage.cid.manfid)
@@ -2565,7 +2564,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 		"%d MB/s (%d MHz)\n"
 		"%d (AU: %d %s\n"
 		"U%d V%d %sA%d%s\n"
-		"%s\n\n"
+		"%s%s\n\n"
 		"%s",
 		sd_storage.csd.structure + 1,
 		sd_storage.csd.cmdclass,
@@ -2576,7 +2575,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 		(sd_storage.csd.busspeed > 10) ? (sd_storage.csd.busspeed * 2) : 50,
 		sd_storage.ssr.speed_class, uhs_au_size, uhs_au_mb ? "MiB)" : "KiB)",
 		sd_storage.ssr.uhs_grade, sd_storage.ssr.video_class, cpe ? cpe : "", sd_storage.ssr.app_class, cpe ? "#" : "",
-		bus_speed,
+		bus_speed, sd_storage.has_pcie ? " | SDE985" : "", // PCIe G3L1 (985 MB/s).
 		wp_info);
 
 	lv_label_set_text(lb_val2, txt_buf);
