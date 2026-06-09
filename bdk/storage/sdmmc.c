@@ -1113,10 +1113,45 @@ static int _sd_storage_get_rca(sdmmc_storage_t *storage)
 	return 1;
 }
 
+u8 sd_storage_get_scr_sda_ver(sdmmc_storage_t *storage)
+{
+	u8 version = 0;
+
+	u8 sda_spec  = storage->scr.sda_vsn;
+	u8 sda_spec3 = storage->scr.sda_spec & 1;
+	u8 sda_spec4 = (storage->scr.sda_spec >> 1) & 1;
+	u8 sda_specx = storage->scr.sda_spec >> 4;
+
+	switch (sda_spec)
+	{
+	case 0:
+		version = 1;
+		break;
+
+	case 1:
+		version = 1;
+		break;
+
+	case 2:
+		if (!sda_spec3)
+			version = 2;
+		else if (!sda_spec4 && !sda_specx)
+			version = 3;
+		else
+			version = sda_specx + 4;
+		break;
+	}
+
+	return version;
+}
+
 static void _sd_storage_parse_scr(sdmmc_storage_t *storage)
 {
 	// unstuff_bits can parse only 4 u32
 	u32 scr[4];
+	u8 sda_spec3 = 0;
+	u8 sda_spec4 = 0;
+	u8 sda_specx = 0;
 
 	memcpy(&scr[2], storage->raw_scr, 8);
 
@@ -1129,15 +1164,18 @@ static void _sd_storage_parse_scr(sdmmc_storage_t *storage)
 
 	// If v2.0 is supported, check if Physical Layer Spec v3.0 is supported.
 	if (storage->scr.sda_vsn == SCR_SPEC_VER_2)
-		storage->scr.sda_spec3 = unstuff_bits(scr, 47, 1);
-	if (storage->scr.sda_spec3)
+		sda_spec3 = unstuff_bits(scr, 47, 1);
+	if (sda_spec3)
 	{
-		u8 sda_spec4 = unstuff_bits(scr, 42, 1);
+		sda_spec4 = unstuff_bits(scr, 42, 1);
+		sda_specx = unstuff_bits(scr, 38, 4);
 		if (sda_spec4)
 			storage->scr.cmds = unstuff_bits(scr, 32, 4);
 		else
 			storage->scr.cmds = unstuff_bits(scr, 32, 2);
 	}
+
+	storage->scr.sda_spec = sda_spec3 | (sda_spec4 << 1) | (sda_specx << 4);
 }
 
 int sd_storage_get_scr(sdmmc_storage_t *storage)

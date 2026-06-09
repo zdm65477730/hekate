@@ -161,7 +161,7 @@ typedef struct _mmc_ext_csd
 typedef struct _sd_scr
 {
 	u8 sda_vsn;
-	u8 sda_spec3;
+	u8 sda_spec;
 	u8 bus_widths;
 	u8 cmds;
 } sd_scr_t;
@@ -238,6 +238,7 @@ int  mmc_storage_get_ext_csd(sdmmc_storage_t *storage);
 int  sd_storage_get_ext_reg(sdmmc_storage_t *storage, u8 fno, u8 page, u16 offset, u32 len, void *buf);
 int  sd_storage_get_fmodes(sdmmc_storage_t *storage, u8 *buf, sd_func_modes_t *functions);
 int  sd_storage_get_scr(sdmmc_storage_t *storage);
+u8   sd_storage_get_scr_sda_ver(sdmmc_storage_t *storage);
 int  sd_storage_get_ssr(sdmmc_storage_t *storage);
 u32  sd_storage_get_ssr_au(sdmmc_storage_t *storage);
 
