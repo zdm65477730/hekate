@@ -2,7 +2,7 @@
  * Header for MultiMediaCard (MMC)
  *
  * Copyright 2002 Hewlett-Packard Company
- * Copyright 2018-2021 CTCaer
+ * Copyright 2018-2026 CTCaer
  *
  * Use consistent with the GNU GPL is permitted,
  * provided that this copyright notice is
@@ -44,14 +44,11 @@
 #define MMC_BUS_TEST_R           14   /* adtc                    R1  */
 #define MMC_GO_INACTIVE_STATE    15   /* ac   [31:16] RCA            */
 #define MMC_BUS_TEST_W           19   /* adtc                    R1  */
-#define MMC_SPI_READ_OCR         58   /* spi                  spi_R3 */
-#define MMC_SPI_CRC_ON_OFF       59   /* spi  [0:0] flag      spi_R1 */
 
 /* class 2 */
 #define MMC_SET_BLOCKLEN         16   /* ac   [31:0] block len   R1  */
 #define MMC_READ_SINGLE_BLOCK    17   /* adtc [31:0] data addr   R1  */
 #define MMC_READ_MULTIPLE_BLOCK  18   /* adtc [31:0] data addr   R1  */
-#define MMC_SEND_TUNING_BLOCK    19   /* adtc                    R1  */
 #define MMC_SEND_TUNING_BLOCK_HS200 21	/* adtc R1  */
 
 /* class 3 */
@@ -63,11 +60,13 @@
 #define MMC_WRITE_MULTIPLE_BLOCK 25   /* adtc                    R1  */
 #define MMC_PROGRAM_CID          26   /* adtc                    R1  */
 #define MMC_PROGRAM_CSD          27   /* adtc                    R1  */
+#define MMC_SET_TIME             49   /* adtc                    R1  */
 
 /* class 6 */
 #define MMC_SET_WRITE_PROT       28   /* ac   [31:0] data addr   R1b */
 #define MMC_CLR_WRITE_PROT       29   /* ac   [31:0] data addr   R1b */
 #define MMC_SEND_WRITE_PROT      30   /* adtc [31:0] wpdata addr R1  */
+#define MMC_SEND_WR_PROTECT_TYPE 31   /* adtc [31:0] wpdata addr R1  */
 
 /* class 5 */
 #define MMC_ERASE_GROUP_START    35   /* ac   [31:0] data addr   R1  */
@@ -85,17 +84,22 @@
 #define MMC_APP_CMD              55   /* ac   [31:16] RCA        R1  */
 #define MMC_GEN_CMD              56   /* adtc [0] RD/WR          R1  */
 
-#define MMC_VENDOR_60_CMD        60   /* Vendor Defined              */
-#define MMC_VENDOR_61_CMD        61   /* Vendor Defined              */
-#define MMC_VENDOR_62_CMD        62   /* Vendor Defined              */
-#define MMC_VENDOR_63_CMD        63   /* Vendor Defined              */
+/* class 10 */
+#define MMC_PROTOCOL_RD          53   /* adtc                    R1  */
+#define MMC_PROTOCOL_WR          54   /* adtc                    R1  */
 
 /* class 11 */
-#define MMC_QUE_TASK_PARAMS      44   /* ac   [20:16] task id    R1  */
-#define MMC_QUE_TASK_ADDR        45   /* ac   [31:0] data addr   R1  */
+#define MMC_QUEUED_TASK_PARAMS   44   /* ac   [20:16] task id    R1  */
+#define MMC_QUEUED_TASK_ADDR     45   /* ac   [31:0] data addr   R1  */
 #define MMC_EXECUTE_READ_TASK    46   /* adtc [20:16] task id    R1  */
 #define MMC_EXECUTE_WRITE_TASK   47   /* adtc [20:16] task id    R1  */
 #define MMC_CMDQ_TASK_MGMT       48   /* ac   [20:16] task id    R1b */
+
+/* class 12 */
+#define MMC_VENDOR_CMD_60        60   /* Vendor Defined              */
+#define MMC_VENDOR_CMD_61        61   /* Vendor Defined              */
+#define MMC_VENDOR_CMD_62        62   /* Vendor Defined              */
+#define MMC_VENDOR_CMD_63        63   /* Vendor Defined              */
 
 /*
  * MMC_SWITCH argument format:
@@ -162,29 +166,6 @@
 #define R1_STATE_RCV	6
 #define R1_STATE_PRG	7
 #define R1_STATE_DIS	8
-
-/*
- * MMC/SD in SPI mode reports R1 status always, and R2 for SEND_STATUS
- * R1 is the low order byte; R2 is the next highest byte, when present.
- */
-#define R1_SPI_IDLE		(1 << 0)
-#define R1_SPI_ERASE_RESET	(1 << 1)
-#define R1_SPI_ILLEGAL_COMMAND	(1 << 2)
-#define R1_SPI_COM_CRC		(1 << 3)
-#define R1_SPI_ERASE_SEQ	(1 << 4)
-#define R1_SPI_ADDRESS		(1 << 5)
-#define R1_SPI_PARAMETER	(1 << 6)
-/* R1 bit 7 is always zero */
-#define R2_SPI_CARD_LOCKED	(1 << 8)
-#define R2_SPI_WP_ERASE_SKIP	(1 << 9)	/* or lock/unlock fail */
-#define R2_SPI_LOCK_UNLOCK_FAIL	R2_SPI_WP_ERASE_SKIP
-#define R2_SPI_ERROR		(1 << 10)
-#define R2_SPI_CC_ERROR		(1 << 11)
-#define R2_SPI_CARD_ECC_ERROR	(1 << 12)
-#define R2_SPI_WP_VIOLATION	(1 << 13)
-#define R2_SPI_ERASE_PARAM	(1 << 14)
-#define R2_SPI_OUT_OF_RANGE	(1 << 15)	/* or CSD overwrite */
-#define R2_SPI_CSD_OVERWRITE	R2_SPI_OUT_OF_RANGE
 
 /*
  * OCR bits are mostly in host.h

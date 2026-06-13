@@ -1,6 +1,6 @@
 /*
  *  Copyright (c) 2005-2007 Pierre Ossman, All Rights Reserved.
- *  Copyright (c) 2018-2025 CTCaer
+ *  Copyright (c) 2018-2026 CTCaer
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -11,43 +11,68 @@
 #ifndef SD_DEF_H
 #define SD_DEF_H
 
-/* SD commands                           type  argument     response */
+/* SD commands                         type  argument     response */
 /* class 0 */
 /* This is basically the same command as for MMC with some quirks. */
 #define SD_SEND_RELATIVE_ADDR     3 /* bcr                     R6  */
 #define SD_SEND_IF_COND           8 /* bcr  [11:0] See below   R7  */
-#define SD_SWITCH_VOLTAGE        11 /* ac                      R1  */
+#define SD_VOLTAGE_SWITCH        11 /* ac                      R1  */
+/* Class 1 */
+#define SD_Q_MANAGEMENT          43 /* ac                      R1b */
+#define SD_Q_TASK_INFO_A         44 /* ac                      R1  */
+#define SD_Q_TASK_INFO_B         45 /* ac                      R1  */
+#define SD_Q_RD_TASK             46 /* adtc                    R1  */
+#define SD_Q_WR_TASK             47 /* adtc                    R1  */
 /* Class 2 */
-#define SD_ADDR_EXT              22 /* ac   [5:0]              R1  */
-/* class 10 */
-#define SD_SWITCH                 6 /* adtc [31:0] See below   R1  */
+#define SD_SEND_TUNING_BLOCK     19 /* ac                      R1b */
+#define SD_SPEED_CLASS_CONTROL   20 /* ac   [31:0]             R1  */
+#define SD_ADDRESS_EXTENSION     22 /* ac   [5:0] UC ext addr  R1  */
 /* class 5 */
 #define SD_ERASE_WR_BLK_START    32 /* ac   [31:0] data addr   R1  */
 #define SD_ERASE_WR_BLK_END      33 /* ac   [31:0] data addr   R1  */
+/* Class 9 */
+#define SD_IO_SEND_OP_COND        5 /* bcr  [31:0] OCR         R4  */
+#define SD_IO_RW_DIRECT          52 /* ac                      R5  */
+#define SD_IO_RW_EXTENDED        53 /* adtc                    R5  */
+/* class 10 */
+#define SD_SWITCH                 6 /* adtc [31:0] See below   R1  */
+#define SD_CMD_SYSTEM_34         34 /* cmd system defined          */
+#define SD_CMD_SYSTEM_35         35 /* cmd system defined          */
+#define SD_CMD_SYSTEM_36         36 /* cmd system defined          */
+#define SD_CMD_SYSTEM_37         37 /* cmd system defined          */
+#define SD_CMD_SYSTEM_50         50 /* cmd system defined          */
+#define SD_CMD_SYSTEM_57         57 /* cmd system defined          */
  /* class 11 */
 #define SD_READ_EXTR_SINGLE      48 /* adtc [31:0]             R1  */
 #define SD_WRITE_EXTR_SINGLE     49 /* adtc [31:0]             R1  */
+#define SD_READ_EXTR_MULTI       58 /* adtc [31:0]             R1  */
+#define SD_WRITE_EXTR_MULTI      59 /* adtc [31:0]             R1  */
+#define SD_VENDOR_CMD_60         60 /* vendor defined              */
+#define SD_VENDOR_CMD_61         61 /* vendor defined              */
+#define SD_VENDOR_CMD_62         62 /* vendor defined              */
+#define SD_VENDOR_CMD_63         63 /* vendor defined              */
 
 /* Application commands */
 #define SD_APP_SET_BUS_WIDTH             6 /* ac   [1:0] bus width    R1  */
 #define SD_APP_SD_STATUS                13 /* adtc                    R1  */
-#define SD_APP_SEND_NUM_WR_BLKS         22 /* adtc                    R1  */
-#define SD_APP_OP_COND                  41 /* bcr  [31:0] OCR         R3  */
+#define SD_APP_SEND_NUM_WR_BLOCKS       22 /* adtc                    R1  */
+#define SD_APP_SET_WR_BLK_ERASE_COUNT   23 /* ac                      R1  */
+#define SD_APP_SD_SEND_OP_COND          41 /* bcr  [31:0] OCR         R3  */
 #define SD_APP_SET_CLR_CARD_DETECT      42 /* adtc                    R1  */
 #define SD_APP_SEND_SCR                 51 /* adtc                    R1  */
 
-/* Application secure commands */
-#define SD_APP_SECURE_READ_MULTI_BLOCK  18 /* adtc                      R1  */
-#define SD_APP_SECURE_WRITE_MULTI_BLOCK 25 /* adtc                      R1  */
-#define SD_APP_SECURE_WRITE_MKB         26 /* adtc                      R1  */
-#define SD_APP_SECURE_ERASE             38 /* adtc                      R1b */
-#define SD_APP_GET_MKB                  43 /* adtc   [31:0] See below   R1  */
-#define SD_APP_GET_MID                  44 /* adtc                      R1  */
-#define SD_APP_SET_CER_RN1              45 /* adtc                      R1  */
-#define SD_APP_GET_CER_RN2              46 /* adtc                      R1  */
-#define SD_APP_SET_CER_RES2             47 /* adtc                      R1  */
-#define SD_APP_GET_CER_RES1             48 /* adtc                      R1  */
-#define SD_APP_CHANGE_SECURE_AREA       49 /* adtc                      R1b */
+/* Application sd secure commands */
+#define SD_APP_SECURE_READ_MULTI_BLOCK  18 /* adtc                    R1  */
+#define SD_APP_SECURE_WRITE_MULTI_BLOCK 25 /* adtc                    R1  */
+#define SD_APP_SECURE_WRITE_MKB         26 /* adtc                    R1  */
+#define SD_APP_SECURE_ERASE             38 /* adtc                    R1b */
+#define SD_APP_GET_MKB                  43 /* adtc   [31:0] See below R1  */
+#define SD_APP_GET_MID                  44 /* adtc                    R1  */
+#define SD_APP_SET_CER_RN1              45 /* adtc                    R1  */
+#define SD_APP_GET_CER_RN2              46 /* adtc                    R1  */
+#define SD_APP_SET_CER_RES2             47 /* adtc                    R1  */
+#define SD_APP_GET_CER_RES1             48 /* adtc                    R1  */
+#define SD_APP_CHANGE_SECURE_AREA       49 /* adtc                    R1b */
 
 /* ICR bit definitions */
 #define SD_ICR_PATTERN      0xAA          /* Check pattern */

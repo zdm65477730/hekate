@@ -159,7 +159,7 @@ static int _sdmmc_storage_check_status(sdmmc_storage_t *storage)
 int sdmmc_storage_execute_vendor_cmd(sdmmc_storage_t *storage, u32 arg)
 {
 	sdmmc_cmd_t cmdbuf;
-	sdmmc_init_cmd(&cmdbuf, MMC_VENDOR_62_CMD, arg, SDMMC_RSP_TYPE_1, 1);
+	sdmmc_init_cmd(&cmdbuf, MMC_VENDOR_CMD_62, arg, SDMMC_RSP_TYPE_1, 1);
 	if (sdmmc_execute_cmd(storage->sdmmc, &cmdbuf, 0, 0))
 		return 1;
 
@@ -193,7 +193,7 @@ int sdmmc_storage_vendor_sandisk_report(sdmmc_storage_t *storage, void *buf)
 	sdmmc_cmd_t cmdbuf;
 	sdmmc_req_t reqbuf;
 
-	sdmmc_init_cmd(&cmdbuf, MMC_VENDOR_63_CMD, 0, SDMMC_RSP_TYPE_1, 0); // similar to CMD17 with arg 0x0.
+	sdmmc_init_cmd(&cmdbuf, MMC_VENDOR_CMD_63, 0, SDMMC_RSP_TYPE_1, 0); // similar to CMD17 with arg 0x0.
 
 	reqbuf.buf              = buf;
 	reqbuf.num_sectors      = 1;
@@ -1011,7 +1011,7 @@ static int _sd_storage_send_op_cond(sdmmc_storage_t *storage, u32 *rocr, u32 ocr
 {
 	sdmmc_cmd_t cmdbuf;
 
-	sdmmc_init_cmd(&cmdbuf, SD_APP_OP_COND, ocr, SDMMC_RSP_TYPE_3, 0);
+	sdmmc_init_cmd(&cmdbuf, SD_APP_SD_SEND_OP_COND, ocr, SDMMC_RSP_TYPE_3, 0);
 
 	if (_sd_storage_execute_app_cmd(storage, R1_SKIP_STATE_CHECK, is_sd_v1 ? R1_ILLEGAL_COMMAND : 0, &cmdbuf, NULL, NULL))
 		return 1;
@@ -1059,7 +1059,7 @@ static int _sd_storage_get_op_cond(sdmmc_storage_t *storage, bool is_sd_v1, int 
 			if (rocr & SD_OCR_S18A && lv_support)
 			{
 				// Switch to 1.8V signaling.
-				if (!_sdmmc_storage_execute_cmd_type1(storage, SD_SWITCH_VOLTAGE, 0, 0, R1_STATE_READY))
+				if (!_sdmmc_storage_execute_cmd_type1(storage, SD_VOLTAGE_SWITCH, 0, 0, R1_STATE_READY))
 				{
 					if (sdmmc_setup_clock(storage->sdmmc, SDHCI_TIMING_UHS_SDR12))
 						return 1;
@@ -1557,7 +1557,7 @@ static int _sd_storage_set_uhs_bus_speed(sdmmc_storage_t *storage, u32 type)
 		return 1;
 	DPRINTF("[SD] after setup clock\n");
 
-	if (sdmmc_tuning_execute(storage->sdmmc, type, MMC_SEND_TUNING_BLOCK))
+	if (sdmmc_tuning_execute(storage->sdmmc, type, SD_SEND_TUNING_BLOCK))
 		return 1;
 	DPRINTF("[SD] after tuning\n");
 
@@ -2002,7 +2002,7 @@ int _gc_storage_custom_cmd(sdmmc_storage_t *storage, void *buf)
 {
 	u32 resp;
 	sdmmc_cmd_t cmdbuf;
-	sdmmc_init_cmd(&cmdbuf, MMC_VENDOR_60_CMD, 0, SDMMC_RSP_TYPE_1, 1);
+	sdmmc_init_cmd(&cmdbuf, MMC_VENDOR_CMD_60, 0, SDMMC_RSP_TYPE_1, 1);
 
 	sdmmc_req_t reqbuf;
 	reqbuf.buf              = buf;
