@@ -1179,6 +1179,8 @@ static void _sd_storage_parse_scr(sdmmc_storage_t *storage)
 	}
 
 	storage->scr.sda_spec = sda_spec3 | (sda_spec4 << 1) | (sda_specx << 4);
+
+	storage->scr.vendor = unstuff_bits(scr, 0, 32);
 }
 
 int sd_storage_get_scr(sdmmc_storage_t *storage)
@@ -1580,6 +1582,64 @@ static int _sd_storage_set_hs25_bus_speed(sdmmc_storage_t *storage)
 	return sdmmc_setup_clock(storage->sdmmc, SDHCI_TIMING_SD_HS25);
 }
 
+bool sd_storage_get_ddr200_support(sdmmc_storage_t *storage)
+{
+	// DDR200 CID reserved/SCR vendor (hex):
+	// Samsung 0x1B: A 00000000
+	// Longsys 0xAD: A 00000000
+	// Kowin   0x22: 7 33333039 33333039 SMART?
+	// Phison  0x27: 0 01196432 Byte2: DDR2XX (25 == DDR225)?
+	// Taishin 0x9F: 0 01006432
+
+	// Non-DDR200:
+	// Phison  0x27: 0 01000000
+	// Taishin 0x9F: 0 01000000
+	// Taishin 0x9F: 7 33333039 Supported but slow nand?
+
+	sd_func_modes_t fmodes = { 0 };
+
+	if (sd_storage_get_fmodes(storage, storage->raw_ext_csd, &fmodes))
+		return false;
+
+	// Introduced first in 2018 via Sandisk Quickflow.
+	if (storage->cid.year < 2018)
+		return false;
+
+	// No DDR200 if no SDR104.
+	if (!(fmodes.access_mode & SD_MODE_UHS_SDR104))
+		return false;
+
+	// Can't enter DDR200 mode without Vendor Command System mode.
+	if (!(fmodes.cmd_system & SD_CMD_SYSTEM_VND))
+		return false;
+
+	// Assume no support if 4.10 and lower. (Should be < 6?)
+	if (sd_storage_get_scr_sda_ver(storage) < 5)
+		return false;
+
+	// Sandisk.
+	if (storage->cid.manfid == 0x03)
+	{
+		// 0x80: DDR200, 0x85: DDR225, 0x86: DDR250? 0x87:DDR275?
+		if (storage->cid.prv >= 0x80)
+			return true;
+		else
+			return false;
+	}
+
+	// CID Reserved bits.
+	if (storage->cid.rsvd == 0xA || // Samsung / Longsys.
+		storage->cid.rsvd == 0x7)   // Taishin A / Kowin.
+		return true;
+
+	// SCR Vendor bits.
+	u32 scr_vnd = storage->scr.vendor & 0xFFFF;
+	if (scr_vnd == 0x6432) // Phison / Taishin B. "d2".
+		return true;
+
+	return false;
+}
+
 u32 sd_storage_get_ssr_au(sdmmc_storage_t *storage)
 {
 	u32 au_size = storage->ssr.uhs_au_size;
@@ -1798,6 +1858,7 @@ static void _sd_storage_parse_cid(sdmmc_storage_t *storage)
 	storage->cid.hwrev        = unstuff_bits(raw_cid, 60,  4);
 	storage->cid.fwrev        = unstuff_bits(raw_cid, 56,  4);
 	storage->cid.serial       = unstuff_bits(raw_cid, 24,  32);
+	storage->cid.rsvd         = unstuff_bits(raw_cid, 20,  4);
 	storage->cid.year         = unstuff_bits(raw_cid, 12,  8) + 2000;
 	storage->cid.month        = unstuff_bits(raw_cid, 8,   4);
 }

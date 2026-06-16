@@ -117,15 +117,16 @@ typedef struct _mmc_sandisk_report_t
 
 typedef struct _mmc_cid
 {
-	u32 manfid;
+	u32 manfid; // SDA assigned.
 	u8  prod_name[8];
 	u32 serial;
-	u16 oemid;
+	u16 oemid;  // SDA assigned.
 	u16	year;
 	u8  prv;
 	u8  hwrev;
 	u8  fwrev;
 	u8  month;
+	u32 rsvd;
 } mmc_cid_t;
 
 typedef struct _mmc_csd
@@ -164,6 +165,7 @@ typedef struct _sd_scr
 	u8 sda_spec;
 	u8 bus_widths;
 	u8 cmds;
+	u32 vendor;
 } sd_scr_t;
 
 typedef struct _sd_ssr
@@ -242,8 +244,8 @@ int  sd_storage_get_scr(sdmmc_storage_t *storage);
 u8   sd_storage_get_scr_sda_ver(sdmmc_storage_t *storage);
 int  sd_storage_get_ssr(sdmmc_storage_t *storage);
 u32  sd_storage_get_ssr_au(sdmmc_storage_t *storage);
-
 void sd_storage_get_ext_regs(sdmmc_storage_t *storage, u8 *buf);
 int  sd_storage_parse_perf_enhance(sdmmc_storage_t *storage, u8 fno, u8 page, u16 offset, u8 *buf);
+bool sd_storage_get_ddr200_support(sdmmc_storage_t *storage);
 
 #endif
