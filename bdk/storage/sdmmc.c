@@ -166,7 +166,7 @@ static int _sdmmc_storage_check_status(sdmmc_storage_t *storage)
 	return _sdmmc_storage_get_status(storage, &tmp, 0);
 }
 
-int sdmmc_storage_execute_vendor_cmd(sdmmc_storage_t *storage, u32 arg)
+int sdmmc_storage_vendor_cmd(sdmmc_storage_t *storage, u32 arg)
 {
 	sdmmc_cmd_t cmdbuf;
 	sdmmc_init_cmd(&cmdbuf, MMC_VENDOR_CMD_62, arg, SDMMC_RSP_TYPE_1, 1);
@@ -196,7 +196,7 @@ int sdmmc_storage_execute_vendor_cmd(sdmmc_storage_t *storage, u32 arg)
 int sdmmc_storage_vendor_sandisk_report(sdmmc_storage_t *storage, void *buf)
 {
 	// Request health report.
-	if (sdmmc_storage_execute_vendor_cmd(storage, MMC_SANDISK_HEALTH_REPORT))
+	if (sdmmc_storage_vendor_cmd(storage, MMC_SANDISK_HEALTH_REPORT))
 		return 2;
 
 	u32 tmp = 0;
@@ -209,6 +209,31 @@ int sdmmc_storage_vendor_sandisk_report(sdmmc_storage_t *storage, void *buf)
 	reqbuf.num_sectors      = 1;
 	reqbuf.blksize          = SDMMC_DAT_BLOCKSIZE;
 	reqbuf.is_write         = 0;
+	reqbuf.is_multi_block   = 0;
+	reqbuf.is_auto_stop_trn = 0;
+
+	if (sdmmc_execute_cmd(storage->sdmmc, &cmdbuf, &reqbuf, NULL))
+	{
+		_sdmmc_storage_get_status(storage, &tmp, 0);
+
+		return 1;
+	}
+
+	return _sdmmc_storage_check_cached_card_status(storage->sdmmc);
+}
+
+int sdmmc_storage_gen_cmd(sdmmc_storage_t *storage, u32 arg, void *buf)
+{
+	u32 tmp = 0;
+	sdmmc_cmd_t cmdbuf;
+	sdmmc_req_t reqbuf;
+
+	sdmmc_init_cmd(&cmdbuf, MMC_GEN_CMD, arg, SDMMC_RSP_TYPE_1, 0);
+
+	reqbuf.buf              = buf;
+	reqbuf.blksize          = SDMMC_DAT_BLOCKSIZE;
+	reqbuf.num_sectors      = 1;
+	reqbuf.is_write         = !(arg & 1);
 	reqbuf.is_multi_block   = 0;
 	reqbuf.is_auto_stop_trn = 0;
 
