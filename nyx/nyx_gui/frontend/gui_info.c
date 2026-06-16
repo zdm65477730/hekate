@@ -1618,8 +1618,171 @@ static lv_res_t _create_mbox_emmc_sandisk_report(lv_obj_t * btn)
 
 out:
 	free(buf);
-	free (txt_buf);
-	free (txt_buf2);
+	free(txt_buf);
+	free(txt_buf2);
+
+	lv_mbox_add_btns(mbox, mbox_btn_map, nyx_mbox_action); // Important. After set_text.
+	lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
+	lv_obj_set_top(mbox, true);
+
+	return LV_RES_OK;
+}
+
+static lv_res_t _create_mbox_sd_vendor_info(lv_obj_t * btn)
+{
+	lv_obj_t *dark_bg = lv_obj_create(lv_layer_top(), NULL);
+	lv_obj_set_style(dark_bg, &mbox_darken);
+	lv_obj_set_size(dark_bg, LV_HOR_RES, LV_VER_RES);
+
+	static const char * mbox_btn_map[] = { "\251", "\222Close", "\251", "" };
+	lv_obj_t * mbox = lv_mbox_create(dark_bg, NULL);
+	lv_mbox_set_recolor_text(mbox, true);
+	lv_obj_set_width(mbox, LV_HOR_RES / 9 * 5);
+
+	lv_mbox_set_text(mbox, "#C7EA46 SD Vendor/Reserved Data#\nPlease wait..");
+	manual_system_maintenance(true);
+
+	u8 *buf = zalloc(EMMC_BLOCKSIZE);
+	char *txt_buf = (char *)malloc(SZ_32K);
+	char *txt_buf2 = (char *)malloc(SZ_32K);
+	txt_buf[0] = 0;
+	txt_buf2[0] = 0;
+
+	// Create SoC Info container.
+	lv_obj_t *h1 = lv_cont_create(mbox, NULL);
+	lv_cont_set_style(h1, &lv_style_transp_tight);
+	lv_cont_set_fit(h1, false, true);
+	lv_obj_set_width(h1, (LV_HOR_RES / 9) * 4);
+	lv_obj_set_click(h1, false);
+	lv_cont_set_layout(h1, LV_LAYOUT_OFF);
+
+	lv_obj_t * lb_desc = lv_label_create(h1, NULL);
+	lv_label_set_long_mode(lb_desc, LV_LABEL_LONG_BREAK);
+	lv_label_set_recolor(lb_desc, true);
+	lv_label_set_style(lb_desc, &monospace_text);
+	lv_obj_set_width(lb_desc, LV_HOR_RES / 9 * 2);
+
+	lv_obj_t * lb_desc2 = lv_label_create(h1, NULL);
+	lv_label_set_long_mode(lb_desc2, LV_LABEL_LONG_BREAK);
+	lv_label_set_recolor(lb_desc2, true);
+	lv_label_set_style(lb_desc2, &monospace_text);
+	lv_obj_set_width(lb_desc2, LV_HOR_RES / 9 * 2);
+	lv_obj_align(lb_desc2, lb_desc, LV_ALIGN_OUT_RIGHT_TOP, 0, 0);
+
+	if (sd_mount())
+	{
+		lv_label_set_text(lb_desc, "#FFDD00 Failed to init SD!#");
+		goto out;
+	}
+
+	sd_vendor_info_t sd_info;
+	sd_storage_get_vendor_info(&sd_storage, &sd_info);
+
+	s_printf(txt_buf,
+		"#00DDFF Vendor/Reserved Registers#\n"
+		"#FF8000 CID[023:020]:# %X\n\n"
+
+		"#FF8000 CSD[009:008]:# %X\n"
+		"#FF8000 CSD[020:016]:# %02X\n"
+		"#FF8000 CSD[030:029]:# %X\n"
+		"#FF8000 CSD[125:120]:# %02X\n"
+
+		"#FF8000 SCR Vendor:#   %08X\n"
+		"#FF8000 SCR[037:036]:# %X\n\n"
+
+		"#FF8000 SSR[031:000]:# %08X\n"
+		"#FF8000 SSR[063:032]:# %08X\n"
+		"#FF8000 SSR[095:064]:# %08X\n"
+		"#FF8000 SSR[127:096]:# %08X\n"
+		"#FF8000 SSR[159:128]:# %08X\n"
+		"#FF8000 SSR[191:160]:# %08X\n"
+		"#FF8000 SSR[223:192]:# %08X\n"
+		"#FF8000 SSR[255:224]:# %08X\n"
+		"#FF8000 SSR[287:256]:# %08X\n"
+		"#FF8000 SSR[311:288]:# %06X",
+		sd_info.cid_rsvd,
+
+		sd_info.csd_rsvd8_9,
+		sd_info.csd_rsvd16_20,
+		sd_info.csd_rsvd29_30,
+		sd_info.csd_rsvd120_125,
+
+		sd_info.scr_vendor,
+		sd_info.scr_rsvd,
+
+		sd_info.ssr_vendor0_31,
+		sd_info.ssr_vendor32_63,
+		sd_info.ssr_vendor64_95,
+		sd_info.ssr_vendor96_127,
+		sd_info.ssr_vendor128_159,
+		sd_info.ssr_vendor160_191,
+		sd_info.ssr_vendor192_223,
+		sd_info.ssr_vendor224_255,
+		sd_info.ssr_vendor256_287,
+		sd_info.ssr_vendor288_311);
+
+	s_printf(txt_buf2,
+		"#FF8000 SSR[327:314]:# %04X\n"
+		"#FF8000 SSR[345:340]:# %02X\n"
+		"#FF8000 SSR[383:378]:# %02X\n"
+		"#FF8000 SSR[427:424]:# %X\n"
+		"#FF8000 SSR[501:496]:# %02X\n\n",
+		sd_info.ssr_rsvd314_327,
+		sd_info.ssr_rsvd340_345,
+		sd_info.ssr_rsvd378_383,
+		sd_info.ssr_rsvd424_427,
+		sd_info.ssr_rsvd496_501);
+
+	if (!sdmmc_storage_gen_cmd(&sd_storage, 0x00000001, buf))
+	{
+		const u32 health_rpt_args[] = {
+			0x00000001, // Sandisk.
+			0x11000001, // ATP.
+			0x110005F1, // AData.
+			0x110005F3,
+			0x110005F5,
+			0x110005F7,
+			0x110005F9, // Transcend.
+			0x110005FB, // Micron.
+			0x110005FD, // Innodisk.
+			0x110005FF,
+
+			(sd_storage.rca << 16)       | 1,
+			(sd_storage.cid.oemid << 16) | 1, // 0x53420001: Swissbit.
+
+			// 0x00000010, // Apacer, 2-Step.
+			// 0x00000021,
+		};
+
+		strcpy(txt_buf2 + strlen(txt_buf2), "#00DDFF Health Report Data#");
+
+		for (u32 i = 0; i < ARRAY_SIZE(health_rpt_args); i++)
+		{
+			sdmmc_storage_gen_cmd(&sd_storage, health_rpt_args[i], buf);
+			u8 test = 0;
+			for (u32 i = 0; i < 512; i++)
+				test |= buf[i];
+
+			if (test)
+				s_printf(txt_buf2 + strlen(txt_buf2), "\n#FF8000 %08X:# Has data!", health_rpt_args[i]);
+			else
+				s_printf(txt_buf2 + strlen(txt_buf2), "\n#FF8000 %08X:# Empty", health_rpt_args[i]);
+		}
+	}
+	else
+		strcpy(txt_buf2 + strlen(txt_buf2), "#00DDFF Health Report Data#\n#FFDD00 Not supported!#");
+
+	lv_mbox_set_text(mbox, "#C7EA46 SD Vendor/Reserved Data#");
+
+	lv_label_set_text(lb_desc, txt_buf);
+	lv_label_set_text(lb_desc2, txt_buf2);
+
+	sd_unmount();
+
+out:
+	free(buf);
+	free(txt_buf);
+	free(txt_buf2);
 
 	lv_mbox_add_btns(mbox, mbox_btn_map, nyx_mbox_action); // Important. After set_text.
 	lv_obj_align(mbox, NULL, LV_ALIGN_CENTER, 0, 0);
@@ -2278,6 +2441,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 {
 	lv_obj_t *win = nyx_create_standard_window(SYMBOL_SD" microSD Card Info", NULL);
 	lv_win_add_btn(win, NULL, SYMBOL_SD" Benchmark", _create_mbox_sd_bench);
+	lv_win_add_btn(win, NULL, SYMBOL_FILE_ALT" Vendor Registers", _create_mbox_sd_vendor_info);
 
 	lv_obj_t *desc = lv_cont_create(win, NULL);
 	lv_obj_set_size(desc, LV_HOR_RES / 2 / 6 * 2, LV_VER_RES - (LV_DPI * 11 / 8) * 5 / 2);
@@ -2425,13 +2589,38 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 	// UHS-I max power limit is 400mA, no matter what the card says.
 	u32 max_power_nominal = sd_storage.max_power > 400 ? 400 : sd_storage.max_power;
 
-	s_printf(txt_buf + strlen(txt_buf), "(%02X)\n%c%c%c%c%c\n%c%c (%04X)\n%X\n%X\n%08x\n%02d/%04d\n\n%d mW (%d mA)\n",
+	// Check for secret bits.
+	bool secret_bits = false;
+	sd_vendor_info_t sd_info = { 0 };
+	sd_storage_get_vendor_info(&sd_storage, &sd_info);
+
+	// Partially known bits.
+	if (sd_info.cid_rsvd && sd_info.cid_rsvd != 0x7 && sd_info.cid_rsvd != 0xA)
+		secret_bits = true;
+	if (sd_info.scr_vendor &&
+		sd_info.scr_vendor != 0x33333039 &&
+		sd_info.scr_vendor != 0x01196432 &&
+		sd_info.scr_vendor != 0x01006432 &&
+		sd_info.scr_vendor != 0x01000000)
+		secret_bits = true;
+
+	// Unknown bits.
+	sd_info.cid_rsvd   = 0;
+	sd_info.scr_vendor = 0;
+	u8 *sd_info8 = (u8 *)&sd_info;
+	for (u32 i = 0; i < sizeof(sd_vendor_info_t); i++)
+		secret_bits |= !!sd_info8[i];
+
+	gfx_hexdump(0, sd_info8, sizeof(sd_vendor_info_t));
+
+	s_printf(txt_buf + strlen(txt_buf), "(%02X)\n%c%c%c%c%c\n%c%c (%04X)\n%X\n%X\n%08x\n%02d/%04d\n%s\n%d mW (%d mA)\n",
 		sd_storage.cid.manfid,
 		sd_storage.cid.prod_name[0], sd_storage.cid.prod_name[1], sd_storage.cid.prod_name[2],
 		sd_storage.cid.prod_name[3], sd_storage.cid.prod_name[4],
 		(sd_storage.cid.oemid >> 8) & 0xFF, sd_storage.cid.oemid & 0xFF, sd_storage.cid.oemid,
 		sd_storage.cid.hwrev, sd_storage.cid.fwrev, sd_storage.cid.serial,
 		sd_storage.cid.month, sd_storage.cid.year,
+		secret_bits ? "#FF8000 Contact me#" : "",
 		max_power_nominal * 3600 / 1000, sd_storage.max_power);
 
 	switch (nyx_str->info.sd_init)
