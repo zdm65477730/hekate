@@ -214,13 +214,12 @@ int sdmmc_storage_vendor_sandisk_report(sdmmc_storage_t *storage, void *buf)
 
 	if (sdmmc_execute_cmd(storage->sdmmc, &cmdbuf, &reqbuf, NULL))
 	{
-		sdmmc_stop_transmission(storage->sdmmc, &tmp);
 		_sdmmc_storage_get_status(storage, &tmp, 0);
 
 		return 1;
 	}
 
-	return 0;
+	return _sdmmc_storage_check_cached_card_status(storage->sdmmc);
 }
 
 static int _sdmmc_storage_readwrite_ex(sdmmc_storage_t *storage, u32 *blkcnt_out, u32 sector, u32 num_sectors, void *buf, u32 is_write)
