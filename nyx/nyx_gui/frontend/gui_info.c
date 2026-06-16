@@ -2319,7 +2319,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 	lv_obj_t * lb_val = lv_label_create(val, lb_desc);
 
 	char *txt_buf = (char *)malloc(SZ_16K);
-	s_printf(txt_buf, "#00DDFF SD v%d.00#\n", sd_storage_get_scr_sda_ver(&sd_storage));
+	s_printf(txt_buf, "#00DDFF v%d.00#\n", sd_storage_get_scr_sda_ver(&sd_storage));
 
 	// Identify manufacturer.
 	switch (sd_storage.cid.manfid)
@@ -2360,6 +2360,9 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 	case 0x1D:
 		strcat(txt_buf, "AData ");
 		break;
+	case 0x22:
+		strcat(txt_buf, "Kowin"); // #E: Digiera.
+		break;
 	case 0x27:
 		strcat(txt_buf, "Phison ");
 		break;
@@ -2388,7 +2391,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 		strcat(txt_buf, "Bongiovi ");
 		break;
 	case 0x74:
-		strcat(txt_buf, "Jiaelec ");
+		strcat(txt_buf, "Jiaelec "); // Transcend.
 		break;
 	case 0x76:
 		strcat(txt_buf, "Patriot ");
@@ -2412,7 +2415,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 		strcat(txt_buf, "Taishin ");
 		break;
 	case 0xAD:
-		strcat(txt_buf, "Longsys ");
+		strcat(txt_buf, "Longsys "); // Lexar/FORESEE.
 		break;
 	default:
 		strcat(txt_buf, "Unknown ");
@@ -2466,10 +2469,11 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 		"Capacity (LBA):\n"
 		"Bus Width:\n"
 		"Current Rate:\n"
+		"Max Bus Speed:\n"
 		"Speed Class:\n"
 		"UHS Classes:\n"
-		"Max Bus Speed:\n\n"
-		"Write Protect:"
+		"Write Protect:\n"
+		"Vendor Info:"
 	);
 	lv_obj_set_width(lb_desc2, lv_obj_get_width(desc2));
 	lv_obj_align(desc2, val, LV_ALIGN_OUT_RIGHT_MID, LV_DPI / 5 * 3, 0);
@@ -2482,15 +2486,15 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 	char *wp_info;
 	switch (sd_storage.csd.write_protect)
 	{
+	case 0:
+		wp_info = "Inactive";
+		break;
 	case 1:
 		wp_info = "Temporary";
 		break;
-	case 2:
-	case 3:
-		wp_info = "Permanent";
-		break;
+	case 2 ... 3:
 	default:
-		wp_info = "None";
+		wp_info = "Permanent";
 		break;
 	}
 
@@ -2506,7 +2510,7 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 	sd_storage_get_fmodes(&sd_storage, NULL, &fmodes);
 
 	char *bus_speed;
-	if      (fmodes.cmd_system  & SD_MODE_UHS_DDR200)
+	if (sd_storage_get_ddr200_support(&sd_storage))
 		bus_speed = "DDR200";
 	else if (fmodes.access_mode & SD_MODE_UHS_SDR104)
 		bus_speed = "SDR104";
@@ -2562,10 +2566,11 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 		"%X (CP %X)\n"
 		"%d\n"
 		"%d MB/s (%d MHz)\n"
+		"%s%s\n"
 		"%d (AU: %d %s\n"
 		"U%d V%d %sA%d%s\n"
-		"%s%s\n\n"
-		"%s",
+		"%s\n"
+		"%X %08X",
 		sd_storage.csd.structure + 1,
 		sd_storage.csd.cmdclass,
 		sd_storage.sec_cnt >> 11,
@@ -2573,10 +2578,11 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 		sd_storage.ssr.bus_width,
 		sd_storage.csd.busspeed,
 		(sd_storage.csd.busspeed > 10) ? (sd_storage.csd.busspeed * 2) : 50,
+		bus_speed, sd_storage.has_pcie ? " | SDE985" : "", // PCIe G3L1 (985 MB/s).
 		sd_storage.ssr.speed_class, uhs_au_size, uhs_au_mb ? "MiB)" : "KiB)",
 		sd_storage.ssr.uhs_grade, sd_storage.ssr.video_class, cpe ? cpe : "", sd_storage.ssr.app_class, cpe ? "#" : "",
-		bus_speed, sd_storage.has_pcie ? " | SDE985" : "", // PCIe G3L1 (985 MB/s).
-		wp_info);
+		wp_info,
+		sd_storage.cid.rsvd, sd_storage.scr.vendor);
 
 	lv_label_set_text(lb_val2, txt_buf);
 
