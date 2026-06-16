@@ -968,6 +968,50 @@ void _sd_storage_debug_print_ssr(const u8 *raw_ssr)
 }
 #endif
 
+void sd_storage_get_vendor_info(sdmmc_storage_t *storage, sd_vendor_info_t *info)
+{
+	// CID Reserved.
+	info->cid_rsvd = storage->cid.rsvd;
+
+	// CSD Reserved.
+	info->csd_rsvd8_9     = unstuff_bits((u32 *)storage->raw_csd,   8, 2);
+	info->csd_rsvd16_20   = unstuff_bits((u32 *)storage->raw_csd,  16, 5);
+	info->csd_rsvd29_30   = unstuff_bits((u32 *)storage->raw_csd,  29, 2);
+	info->csd_rsvd120_125 = unstuff_bits((u32 *)storage->raw_csd, 120, 6);
+
+	// SCR Vendor and Reserved.
+	u32 scr[4];
+	memcpy(&scr[2], storage->raw_scr, 8);
+	info->scr_vendor = storage->scr.vendor;
+	info->scr_rsvd   = unstuff_bits(scr, 36, 2);
+
+	// SSR Vendor and Reserved.
+	u32 raw_ssr0[4]; // 511:384.
+	u32 raw_ssr1[4]; // 383:256.
+	u32 raw_ssr2[4]; // 255:128.
+	u32 raw_ssr3[4]; // 127:0.
+	memcpy(raw_ssr0, &storage->raw_ssr[0],  16);
+	memcpy(raw_ssr1, &storage->raw_ssr[16], 16);
+	memcpy(raw_ssr2, &storage->raw_ssr[32], 16);
+	memcpy(raw_ssr3, &storage->raw_ssr[48], 16);
+	info->ssr_vendor0_31    = unstuff_bits(raw_ssr3,   0, 32);
+	info->ssr_vendor32_63   = unstuff_bits(raw_ssr3,  32, 32);
+	info->ssr_vendor64_95   = unstuff_bits(raw_ssr3,  64, 32);
+	info->ssr_vendor96_127  = unstuff_bits(raw_ssr3,  96, 32);
+	info->ssr_vendor128_159 = unstuff_bits(raw_ssr2, 128, 32);
+	info->ssr_vendor160_191 = unstuff_bits(raw_ssr2, 160, 32);
+	info->ssr_vendor192_223 = unstuff_bits(raw_ssr2, 192, 32);
+	info->ssr_vendor224_255 = unstuff_bits(raw_ssr2, 224, 32);
+	info->ssr_vendor256_287 = unstuff_bits(raw_ssr1, 256, 32);
+	info->ssr_vendor288_311 = unstuff_bits(raw_ssr1, 288, 24);
+
+	info->ssr_rsvd314_327 = unstuff_bits(raw_ssr1, 314, 14);
+	info->ssr_rsvd340_345 = unstuff_bits(raw_ssr1, 340,  6);
+	info->ssr_rsvd378_383 = unstuff_bits(raw_ssr1, 378,  6);
+	info->ssr_rsvd424_427 = unstuff_bits(raw_ssr0, 424,  4);
+	info->ssr_rsvd496_501 = unstuff_bits(raw_ssr0, 496,  6);
+}
+
 int sd_storage_get_ext_reg(sdmmc_storage_t *storage, u8 fno, u8 page, u16 address, u32 len, void *buf)
 {
 	if (!(storage->scr.cmds & BIT(2)))

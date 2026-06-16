@@ -190,6 +190,46 @@ typedef struct _sd_ext_reg_t
 	int valid;
 } sd_ext_reg_t;
 
+typedef struct _sd_func_modes_t
+{
+	u16 access_mode;
+	u16 cmd_system;
+	u16 driver_strength;
+	u16 power_limit;
+} sd_func_modes_t;
+
+typedef struct _sd_vendor_info_t
+{
+	// CID Reserved.
+	u8 cid_rsvd; // 4-bit.
+
+	// CSD Reserved.
+	u8 csd_rsvd8_9;     // 2-bit.
+	u8 csd_rsvd16_20;   // 5-bit.
+	u8 csd_rsvd29_30;   // 2-bit.
+	u8 csd_rsvd120_125; // 6-bit.
+
+	u32 scr_vendor;
+	u8  scr_rsvd; // 2-bit.
+
+	u32 ssr_vendor0_31;
+	u32 ssr_vendor32_63;
+	u32 ssr_vendor64_95;
+	u32 ssr_vendor96_127;
+	u32 ssr_vendor128_159;
+	u32 ssr_vendor160_191;
+	u32 ssr_vendor192_223;
+	u32 ssr_vendor224_255;
+	u32 ssr_vendor256_287;
+	u32 ssr_vendor288_311; // 24-bit.
+
+	u16 ssr_rsvd314_327; // 14-bit.
+	u8  ssr_rsvd340_345; //  6-bit.
+	u8  ssr_rsvd378_383; //  6-bit.
+	u8  ssr_rsvd424_427; //  4-bit.
+	u8  ssr_rsvd496_501; //  6-bit.
+} sd_vendor_info_t;
+
 /*! SDMMC storage context. */
 typedef struct _sdmmc_storage_t
 {
@@ -216,14 +256,6 @@ typedef struct _sdmmc_storage_t
 	sd_ext_reg_t  ser;
 } sdmmc_storage_t;
 
-typedef struct _sd_func_modes_t
-{
-	u16 access_mode;
-	u16 cmd_system;
-	u16 driver_strength;
-	u16 power_limit;
-} sd_func_modes_t;
-
 int  sdmmc_storage_end(sdmmc_storage_t *storage);
 int  sdmmc_storage_read(sdmmc_storage_t *storage, u32 sector, u32 num_sectors, void *buf);
 int  sdmmc_storage_write(sdmmc_storage_t *storage, u32 sector, u32 num_sectors, void *buf);
@@ -248,5 +280,7 @@ u32  sd_storage_get_ssr_au(sdmmc_storage_t *storage);
 void sd_storage_get_ext_regs(sdmmc_storage_t *storage, u8 *buf);
 int  sd_storage_parse_perf_enhance(sdmmc_storage_t *storage, u8 fno, u8 page, u16 offset, u8 *buf);
 bool sd_storage_get_ddr200_support(sdmmc_storage_t *storage);
+
+void sd_storage_get_vendor_info(sdmmc_storage_t *storage, sd_vendor_info_t *info);
 
 #endif
