@@ -2681,13 +2681,9 @@ static lv_res_t _create_window_sdcard_info_status(lv_obj_t *btn)
 	case 1:
 		wp_info = "临时";
 		break;
-	case 2:
-	case 3:
-		wp_info = "永久";
-		break;
 	case 2 ... 3:
 	default:
-		wp_info = "无";
+		wp_info = "永久";
 		break;
 	}
 
