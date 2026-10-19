@@ -3352,11 +3352,7 @@ lv_res_t create_window_partition_manager(bool emmc)
 		lv_label_set_static_text(label_btn, SYMBOL_DOWNLOAD"  刷写Android 11");
 		break;
 	case 2: // Android 13+
-<<<<<<< HEAD
-		lv_label_set_static_text(label_btn, SYMBOL_DOWNLOAD"  刷写Android13+");
-=======
 		lv_label_set_static_text(label_btn, SYMBOL_DOWNLOAD"  刷写Android 13+");
->>>>>>> CTCaer-master
 		break;
 	}
 	lv_obj_align(btn_flash_android, btn_flash_l4t, LV_ALIGN_OUT_RIGHT_MID, LV_DPI / 3, 0);
